@@ -1,6 +1,12 @@
-             This file contains the license for Project Zion.
+             This file contains the license for Project Zion,
+         the goal to create a reproducible process for building a
+          host for virtual machines using The Foreman and Puppet.
 
-    It also lists the licenses for other components used by the project.
+    It also lists the licenses for other components used by the project,
+              and tools referenced in the instructions.
+      I will usually reference a link to third party licenses.
+   Third party license listed here for convenience and completeness
+            no guarantee they are correct or current.
 
           For more information, see https://github.com/tinisi/zion/.
 
@@ -30,3 +36,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+=============================================================================+
+Fabric is distributed under this license:
+
+https://github.com/fabric/fabric/blob/1.6/LICENSE
