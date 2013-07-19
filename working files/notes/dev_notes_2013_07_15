@@ -1,0 +1,30 @@
+#
+# dev notes
+# 7/15/2013
+
+# 7/15/2013
+
+to test the current code:
+
+on each host make a folder for some test files in ~
+mkdir ~/zion_test
+
+workon zion_v_1
+	switch to zion_v_1 environment in virtualenv
+fab install --hosts=localhost,rancho.tinisi.com
+	run the current script in fabfile folder/package
+
+on each host this should result in:
+
+cd ~/zion_test
+ls -1
+bind.install
+dhcp.install
+foreman.install
+install
+os.setup
+puppet.install
+user.create
+	
+an empty file for each method/action in each package
+
