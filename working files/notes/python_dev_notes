@@ -1,0 +1,65 @@
+#
+# python dev set up for Mac
+#
+
+# 5/14/2013
+
+sudo easy_install pip
+
+sudo pip install virtualenv
+
+sudo pip install virtualenvwrapper
+
+mkdir .virtualenvs
+
+- added this to .bash_profile
+# virtualenv
+export WORKON_HOME=$HOME/.virtualenvs
+source /
+
+- made an environment
+mkvirtualenv zion_v_1
+
+sudo pip install Fabric
+	got an error, need a compiler
+
+installing command line tools (gets you a compiler!)
+https://developer.apple.com/downloads/index.action
+
+sudo pip install Fabric
+
+bingo!
+
+# to do
+
+
+
+# resources
+
+http://docs.fabfile.org/en/1.6/
+
+http://jontourage.com/2011/02/09/virtualenv-pip-basics/
+	pretty much followed these directions
+
+https://pypi.python.org/pypi/virtualenv
+
+http://dubroy.com/blog/so-you-want-to-install-a-python-package/#installing
+
+
+http://guide.python-distribute.org/installation.html
+
+http://stackoverflow.com/questions/1534210/use-different-python-version-with-virtualenv
+
+https://developer.apple.com/downloads
+(command line tools)
+
+http://stackoverflow.com/questions/1534210/use-different-python-version-with-virtualenv
+
+http://virtualenvwrapper.readthedocs.org/en/latest/command_ref.html
+
+http://doughellmann.com/2008/05/virtualenvwrapper.html
+
+http://doughellmann.com/2008/02/ipython-and-virtualenv.html
+
+https://github.com/mxcl/homebrew/wiki/Homebrew-and-Python
+
