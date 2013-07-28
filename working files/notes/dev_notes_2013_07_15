@@ -1,18 +1,23 @@
 #
 # dev notes
 # 7/15/2013
+#
 
-# 7/15/2013
+# 7/27/2013
 
 to test the current code:
 
 on each host make a folder for some test files in ~
 mkdir ~/zion_test
 
+put something like this in your .fabricrc
+zion_config_file = /full/path/to/this/src/zion/config/prod.json
+
 workon zion_v_1
 	switch to zion_v_1 environment in virtualenv
 fab install --hosts=localhost,rancho.tinisi.com
 	run the current script in fabfile folder/package
+	(this most simple example assumed you have a user with same name as local on all hosts)
 
 on each host this should result in:
 
@@ -27,4 +32,7 @@ puppet.install
 user.create
 	
 an empty file for each method/action in each package
+and the file install should have something like this:
 
+host ip: 192.168.0.12
+debug: False 

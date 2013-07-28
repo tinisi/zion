@@ -1,0 +1,27 @@
+{
+	"shared_conf": {
+		"debug": false		
+	},
+	"host_conf": {
+		"rancho.tinisi.com": {
+			"ip": "192.168.0.10",
+			"users": [ {
+				"name": "tinisi",
+				"password": "password"
+			}, {
+				"name": "joeblow",
+				"password": "password"
+			} ]
+		},
+		"localhost": {
+			"ip": "192.168.0.12",
+			"users": [ {
+				"name": "tinisi",
+				"password": "password"
+			}, {
+				"name": "joeblow",
+				"password": "password"
+			} ]
+		}
+	}
+}

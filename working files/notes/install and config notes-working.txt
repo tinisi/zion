@@ -16,15 +16,15 @@ manual steps
 [ ] minimal install CD with defaults
 	check box to make network "automatic" (changes DHCP to ONBOOT-yes)
 
-os.users
+os.users (run as root?)
 
 [ ] made user for tinisi
-[ ] edit /etc/sysconfig/network-scripts/ifcfg-eth0
-	- change onboot to yes
-[ ] give tinisi sudo
-	* use visudo command
-	add this right below line for root:
-	tinisi    ALL=(ALL)       ALL
+[ ] put tinisi in wheel
+[ ] give wheel sudo
+ - copy sudo file to temp spot
+ - use fabric command to un-comment line in default file
+ - use visudo -q -c -s -f on new file to check it
+ - swap out the temp file
 
 os.security
 
@@ -38,10 +38,11 @@ os.update
 
 [ ] sudo yum checkupdate
 [ ] sudo yum update
+[ ] log current patch level of everything, yum list command???
 
 os.utils
 
-yum install patch
+yum install patch <== not sure about this, hoping to use fabric features instead
 
 puppet.install
 
