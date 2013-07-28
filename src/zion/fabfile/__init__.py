@@ -9,6 +9,12 @@ import foreman
 from zion_config_helper import ZionConfigHelper
 
 @task
+def pre_install():
+    # this should be all the steps that must be run as root
+    os.enable_sudo()
+    # os.disable_remote_root()
+
+@task
 def install():
     zch = ZionConfigHelper(env.zion_config_file, env.host)
     string = '''
