@@ -16,8 +16,8 @@ def pre_install():
 
 @task
 def install():
-    os.ssh_lockdown()
-#    os.update()
+#    os.ssh_lockdown()
+    os.update()
 #    users.create()
 #    bind.install()
 #    dhcp.install()

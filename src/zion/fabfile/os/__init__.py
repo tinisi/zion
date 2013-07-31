@@ -35,7 +35,7 @@ def add_users():
         if 'groups' in user: 
             run('usermod --append --groups %(groupString)s %(name)s' % {"groupString":','.join(user['groups']), "name":user['name'] })
 
-# these can be run as a user with sudo poswer
+# these can be run as a user with sudo user
 
 @task
 def ssh_lockdown():
@@ -49,5 +49,13 @@ def ssh_lockdown():
     sudo('service sshd restart')
 
 @task
-def setup():
-  run('touch ~/zion_test/os.setup')
+def update():
+    # list what is installed so we know what happened
+    sudo('yum list installed')
+    # this command returns 100 when there are any updates, so only showing a warning
+    with settings(warn_only=True):
+        sudo('yum check-update')
+    # just go for it!
+    sudo('yum --assumeyes update')
+    # and then another list to compare
+    sudo('yum list installed')

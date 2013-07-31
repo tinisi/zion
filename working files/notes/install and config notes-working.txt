@@ -22,24 +22,27 @@ os.users (run as root?)
 [X] made user for tinisi
 [X] put tinisi in wheel
 [X] give wheel sudo
- - copy sudo file to temp spot
- - use fabric command to un-comment line in default file
- - use visudo -q -c -s -f on new file to check it
- - swap out the temp file
+ 	- copy sudo file to temp spot
+	 - use fabric command to un-comment line in default file
+	 - use visudo -q -c -s -f on new file to check it
+	 - swap out the temp file
 
 os.security
 
 [X] change these from default in /etc/ssh/sshd_config
-Port 22 <= this is actually the default
-Protocol 2 <= this is actually the default
-PermitRootLogin no
-UseDNS no
+	Port 22 <= this is actually the default
+	Protocol 2 <= this is actually the default
+	PermitRootLogin no
+	UseDNS no
 
 os.update
 
-[ ] sudo yum checkupdate
-[ ] sudo yum update
-[ ] log current patch level of everything, yum list command???
+[X] sudo yum checkupdate
+[X} sudo yum update
+[X] yum list installed
+
+##############
+TODO: should be installing dhcp and bind first!
 
 puppet.install
 
