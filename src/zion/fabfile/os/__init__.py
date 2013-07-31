@@ -42,7 +42,7 @@ def add_users():
 # these can be run as a user with sudo poswer
 
 @task
-def disable_remote_root():
+def ssh_lockdown():
     # we are gonna guts it and work on this one in place (no temp file and swap)
     sshd_config_file = '/etc/ssh/sshd_config'
     # since I have three changes to the same file, making numbered backup extensions
