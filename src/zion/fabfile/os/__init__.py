@@ -3,7 +3,7 @@ from fabric.api import *
 from fabric.contrib import *
 from .. zion_config_helper import ZionConfigHelper
 
-# these must be run as root
+# these MUST be run as root
 
 @task
 def enable_sudo():
@@ -40,6 +40,17 @@ def add_users():
             run('usermod --append --groups %(groupString)s %(name)s' % {"groupString":','.join(user['groups']), "name":user['name'] })
 
 # these can be run as a user with sudo poswer
+
+@task
+def disable_remote_root():
+    # we are gonna guts it and work on this one in place (no temp file and swap)
+    sshd_config_file = '/etc/ssh/sshd_config'
+    # since I have three changes to the same file, making numbered backup extensions
+    files.sed(sshd_config_file, '#PermitRootLogin yes', 'PermitRootLogin no', use_sudo=True, backup='.zion_bak_1')
+    files.sed(sshd_config_file, '#UseDNS yes', 'UseDNS no', use_sudo=True, backup='.zion_bak_2')
+    files.uncomment(sshd_config_file, 'Port 22', use_sudo=True, backup='.zion_bak_3')
+    # and restart the service to pick up the changes
+    sudo('service sshd restart')
 
 @task
 def setup():

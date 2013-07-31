@@ -13,14 +13,15 @@
 
 manual steps
 
-[ ] minimal install CD with defaults
-	check box to make network "automatic" (changes DHCP to ONBOOT-yes)
+[X] instructions for minimal install CD with defaults
+
+[ ] TODO: look for check box to make network "automatic" (changes DHCP to ONBOOT-yes)
 
 os.users (run as root?)
 
-[ ] made user for tinisi
-[ ] put tinisi in wheel
-[ ] give wheel sudo
+[X] made user for tinisi
+[X] put tinisi in wheel
+[X] give wheel sudo
  - copy sudo file to temp spot
  - use fabric command to un-comment line in default file
  - use visudo -q -c -s -f on new file to check it
@@ -28,7 +29,7 @@ os.users (run as root?)
 
 os.security
 
-[ ] change these from default in /etc/ssh/sshd_config
+[X] change these from default in /etc/ssh/sshd_config
 Port 22 <= this is actually the default
 Protocol 2 <= this is actually the default
 PermitRootLogin no
@@ -39,10 +40,6 @@ os.update
 [ ] sudo yum checkupdate
 [ ] sudo yum update
 [ ] log current patch level of everything, yum list command???
-
-os.utils
-
-yum install patch <== not sure about this, hoping to use fabric features instead
 
 puppet.install
 
