@@ -7,7 +7,8 @@
 			"ip": "192.168.0.10",
 			"users": [ {
 				"name": "tinisi",
-				"password": "password"
+				"password": "password",
+				"groups": [ "wheel", "cdrom" ]
 			}, {
 				"name": "joeblow",
 				"password": "password"
@@ -17,7 +18,8 @@
 			"ip": "192.168.0.11",
 			"users": [ {
 				"name": "tinisi",
-				"password": "password"
+				"password": "password",
+				"groups": [ "wheel", "cdrom" ]
 			}, {
 				"name": "joeblow",
 				"password": "password"

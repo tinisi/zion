@@ -12,6 +12,7 @@ from zion_config_helper import ZionConfigHelper
 def pre_install():
     # this should be all the steps that must be run as root
     os.enable_sudo()
+    os.add_users()
     # os.disable_remote_root()
 
 @task
