@@ -8,20 +8,16 @@ from .. zion_config_helper import ZionConfigHelper
 @task
 def enable_sudo():
     sudoer_temp_file = '/etc/sudoers.zion_temp'
-    sudoer_bak_file = '/etc/sudoers.zion_bak'
-    # make an extra paranoid backup
-    run('cp -p /etc/sudoers ' + sudoer_bak_file)
     # make a working file to mess with
     run('cp -p /etc/sudoers ' + sudoer_temp_file)
     # remove a comment to allow sudo for all members of wheel
-    files.uncomment(sudoer_temp_file, '%wheel[\t]+ALL=\(ALL\)[\t]+ALL')
+    files.uncomment(sudoer_temp_file, '%wheel[\t]+ALL=\(ALL\)[\t]+ALL', backup='.zion_bak')
     # verify that the resulting file is OK according to visudo
     sudo('visudo -c -q -f ' + sudoer_temp_file)
     # and copy it back in place
     run('cp -p ' + sudoer_temp_file + ' /etc/sudoers')
-    # clean up (our file and the one visudo makes automagically)
+    # clean up (our temp file, leave the backup created by files.uncomment())
     run('rm ' + sudoer_temp_file)
-    run('rm ' + sudoer_temp_file + '.bak')
 
 @task
 def add_users():
