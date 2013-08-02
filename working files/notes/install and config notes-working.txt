@@ -41,10 +41,6 @@
 [X] yum list installed
 
 # install
-    users.create
-(TODO: not used, delete this when code is changed)
-
-# install
     bind.install
 
 # install

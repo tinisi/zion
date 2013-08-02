@@ -1,7 +1,6 @@
 
 from fabric.api import *
 import os
-import users
 import bind
 import dhcp
 import puppet
@@ -18,7 +17,6 @@ def pre_install():
 def install():
 #    os.ssh_lockdown()
     os.update()
-#    users.create()
 #    bind.install()
 #    dhcp.install()
 #    puppet.install()
