@@ -41,16 +41,41 @@
 [X] yum list installed
 
 # install
-    bind.install
+    dhcp.install
+
+[ ] sudo yum install dhcp
+[ ] set up dhcpd.conf per this web site:
+	http://www.krizna.com/centos/install-configure-dhcp-server-centos-6/
+[ ] chkconfig --levels 235 dhcpd on
+[ ] generated DHCP key
+sudo dnssec-keygen -r /dev/urandom -a HMAC-MD5 -b 512 -n HOST omapi_key
+sudo cat Komapi_key.+*.private |grep ^Key|cut -d ' ' -f2-
+[..key..]
+[ ] used pretty much the exact dhcpd.conf file as here:
+	http://sysadminpy.com/sysadmin/2012/04/05/setting-up-foreman-on-centosrhel-57-part-2
+[ ] chkconfig --levels 235 dhcpd on
 
 # install
-    dhcp.install
+    bind.install
+
 
 # install
     puppet.install
 
 # install
     foreman.install
+
+(foreman dhcp related tasks)
+[ ] added this to /etc/foreman-proxy/settings.yml
+:dhcp_key_name: omapi_key
+:dhcp_key_secret: [..key..]
+[ ] now issue is proxy log says can't read dhcps conf or leases
+[ ] usermod -a -G dhcpd foreman-proxy
+[ ] made /etc/dhcp world readable and executable
+chmod o=r dhcp
+chmod o=rx ./dhcp
+
+(foreman DNS relates tasks)
 
 #
 # remaining action log from rancho (steps to convert or delete)
@@ -102,26 +127,13 @@ sudo ruby /usr/share/foreman-installer/generate_answers.rb
 [ ] sudo yum install libvirt
 [ ] sudo service libvirtd restart
 [ ] sudo yum install bind
-[ ] sudo yum install dhcp
-[ ] set up dhcpd.conf per this web site:
-	http://www.krizna.com/centos/install-configure-dhcp-server-centos-6/
-[ ] chkconfig --levels 235 dhcpd on
 [ ] sudo yum install bind-chroot
 	* per http://sysadminpy.com/sysadmin/2012/04/05/setting-up-foreman-on-centosrhel-57-part-2/#foreman_dependencies
 	* all this bind stuff should be earlier
 [ ] sudo yum install bind-libs
 	* ditto
-[ ] generated DHCP key
-sudo dnssec-keygen -r /dev/urandom -a HMAC-MD5 -b 512 -n HOST omapi_key
-sudo cat Komapi_key.+*.private |grep ^Key|cut -d ' ' -f2-
-[..key..]
-[ ] used pretty much the exact dhcpd.conf file as here:
-	http://sysadminpy.com/sysadmin/2012/04/05/setting-up-foreman-on-centosrhel-57-part-2
-[ ] added this to /etc/foreman-proxy/settings.yml
-:dhcp_key_name: omapi_key
-:dhcp_key_secret: [..key..]
 [ ] followed instructions here to set up chrooted dns
-[ ] chkconfig --levels 235 dhcpd on
+
 [ ] added this to sudoer:
 Defaults:foreman-proxy !requiretty
 foreman-proxy ALL = NOPASSWD: /usr/bin/puppet
@@ -140,11 +152,6 @@ bundle install --local
 usermod -a -G named foreman-proxy
 so that this test will pass:
 [ ] man issue might be that the MAC field is hidden, using client side mojo to make it visible
-[ ] now issue is proxy log says can't read dhcps conf or leases
-[ ] usermod -a -G dhcpd foreman-proxy
-[ ] made /etc/dhcp world readable and executable
-chmod o=r dhcp
-chmod o=rx ./dhcp
 [ ] new error, reverse DNS for matrix failing
 [ ] added it to the hosts file
 [ ] hacked my way through getting dns server working
