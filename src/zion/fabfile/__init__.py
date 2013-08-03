@@ -17,7 +17,8 @@ def pre_install():
 def install():
 #    os.ssh_lockdown()
 #    os.update()
-    dhcp.install()
+    os.add_repos()
+#    dhcp.install()
 #    bind.install()
 #    puppet.install()
 #    foreman.install()

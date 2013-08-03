@@ -41,23 +41,39 @@
 [X] yum list installed
 
 # install
+	os.add_repos
+
+[X] rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
+	this adds the EPEL repo to yum:
+	http://fedoraproject.org/wiki/EPEL/FAQ#How_can_I_install_the_packages_from_the_EPEL_software_repository.3F
+[X] sudo rpm -ivh http://yum.puppetlabs.com/el/6/products/i386/puppetlabs-release-6-6.noarch.rpm
+	this adds puppet labs to yum repos from here:
+	http://docs.puppetlabs.com/guides/puppetlabs_package_repositories.html
+
+# install
     dhcp.install
 
 [ ] sudo yum install dhcp
-[ ] set up dhcpd.conf per this web site:
+[X] used pretty much the exact dhcpd.conf file as here:
+	http://sysadminpy.com/sysadmin/2012/04/05/setting-up-foreman-on-centosrhel-57-part-2
+[X] set up dhcpd.conf per this web site:
 	http://www.krizna.com/centos/install-configure-dhcp-server-centos-6/
-[ ] chkconfig --levels 235 dhcpd on
+
+TODO: in template:
+	get value for next_server from current host IP
+	router from current host gateway
+	domain_name_servers from current host dns_servers
+	domain_name from current host domain_name
+	secret from newly created secret (cat Komapi_key.+*.private |grep ^Key|cut -d ' ' -f2-)
+
 [ ] generated DHCP key
 sudo dnssec-keygen -r /dev/urandom -a HMAC-MD5 -b 512 -n HOST omapi_key
 sudo cat Komapi_key.+*.private |grep ^Key|cut -d ' ' -f2-
 [..key..]
-[ ] used pretty much the exact dhcpd.conf file as here:
-	http://sysadminpy.com/sysadmin/2012/04/05/setting-up-foreman-on-centosrhel-57-part-2
 [ ] chkconfig --levels 235 dhcpd on
 
 # install
     bind.install
-
 
 # install
     puppet.install
@@ -81,12 +97,6 @@ chmod o=rx ./dhcp
 # remaining action log from rancho (steps to convert or delete)
 #
 
-[ ] rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
-	this adds the EPEL repo to yum:
-	http://fedoraproject.org/wiki/EPEL/FAQ#How_can_I_install_the_packages_from_the_EPEL_software_repository.3F
-[ ] sudo rpm -ivh http://yum.puppetlabs.com/el/6/products/i386/puppetlabs-release-6-6.noarch.rpm
-	this adds puppet labs to yum repos from here:
-	http://docs.puppetlabs.com/guides/puppetlabs_package_repositories.html
 [ ] sudo yum install ruby
 	dependency for puppet
 [ ] sudo yum install puppet

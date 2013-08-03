@@ -33,7 +33,7 @@ def add_users():
         run('echo %(password)s| passwd %(name)s --stdin $1' % user)
         # if there are groups, add them
         if 'groups' in user: 
-            run('usermod --append --groups %(groupString)s %(name)s' % {"groupString":','.join(user['groups']), "name":user['name'] })
+            run('usermod --append --groups %(group_string)s %(name)s' % {"group_string":','.join(user['groups']), "name":user['name'] })
 
 # these can be run as a user with sudo user
 
@@ -59,3 +59,8 @@ def update():
     sudo('yum --assumeyes update')
     # and then another list to compare
     sudo('yum list installed')
+
+@task
+def add_repos():
+    sudo('rpm -ivh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm')
+    sudo('rpm -ivh http://yum.puppetlabs.com/el/6/products/i386/puppetlabs-release-6-6.noarch.rpm')
