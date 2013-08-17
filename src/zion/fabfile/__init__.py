@@ -17,8 +17,10 @@ def pre_install():
 def install():
 #    os.ssh_lockdown()
 #    os.update()
-    os.add_repos()
+#   os.add_repos()
+    bind.install()
+	# NOTE: bind needs to be installed before dhcp
+	# because of depdendency on dnssec-keygen
 #    dhcp.install()
-#    bind.install()
 #    puppet.install()
 #    foreman.install()

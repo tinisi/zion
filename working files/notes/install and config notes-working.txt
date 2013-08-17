@@ -51,35 +51,38 @@
 	http://docs.puppetlabs.com/guides/puppetlabs_package_repositories.html
 
 # install
+    bind.install
+
+[X] sudo yum install bind-utils
+[X] sudo yum install bind-libs
+[X] sudo yum install bind
+[ ] sudo yum install bind-chroot
+	* per http://sysadminpy.com/sysadmin/2012/04/05/setting-up-foreman-on-centosrhel-57-part-2/#foreman_dependencies
+	* all this bind stuff should be earlier
+	* ditto
+[ ] followed instructions here to set up chrooted dns
+
+# install
     dhcp.install
 
-[ ] sudo yum install dhcp
+[X] sudo yum install dhcp
 [X] used pretty much the exact dhcpd.conf file as here:
 	http://sysadminpy.com/sysadmin/2012/04/05/setting-up-foreman-on-centosrhel-57-part-2
 [X] set up dhcpd.conf per this web site:
 	http://www.krizna.com/centos/install-configure-dhcp-server-centos-6/
 
-TODO: in template:
-	get value for next_server from current host IP
-	router from current host gateway
-	domain_name_servers from current host dns_servers
-	domain_name from current host domain_name
-	secret from newly created secret (cat Komapi_key.+*.private |grep ^Key|cut -d ' ' -f2-)
-
-[ ] generated DHCP key
+[X]] generated DHCP key
 sudo dnssec-keygen -r /dev/urandom -a HMAC-MD5 -b 512 -n HOST omapi_key
 sudo cat Komapi_key.+*.private |grep ^Key|cut -d ' ' -f2-
 [..key..]
-[ ] chkconfig --levels 235 dhcpd on
-
-# install
-    bind.install
+[X] chkconfig --levels 235 dhcpd on
 
 # install
     puppet.install
 
 # install
     foreman.install
+
 
 (foreman dhcp related tasks)
 [ ] added this to /etc/foreman-proxy/settings.yml
@@ -92,6 +95,9 @@ chmod o=r dhcp
 chmod o=rx ./dhcp
 
 (foreman DNS relates tasks)
+[ ] added foreman-proxy to the named group:
+usermod -a -G named foreman-proxy
+so that this test will pass:
 
 #
 # remaining action log from rancho (steps to convert or delete)
@@ -110,14 +116,13 @@ chmod o=rx ./dhcp
 [ ] sudo vi /etc/sysconfig/network
 	followed these instructions to edit:
 	https://gist.github.com/fernandoaleman/2172388
-[ ] added this to /etc/host.conf
+[SKIPPABPE?] added this to /etc/host.conf
 	order hosts,bind
-[ ] aded this to /etc/hosts
+[SKIPPABLE] aded this to /etc/hosts
 127.0.0.1   localhost localhost.rancho
 ::1         localhost localhost.rancho
 192.168.0.10    rancho.tinisi.com       rancho
 	http://serverfault.com/questions/42909/do-entries-in-local-hosts-files-override-both-forward-and-reverse-name-lookups
-[ ] sudo yum install bind-utils
 [ ] re-ran installer
 sudo ruby /usr/share/foreman-installer/generate_answers.rb
 [ ] no love, from my laptop I get a null reply from port 80, and connection refused from port 443
@@ -136,14 +141,6 @@ sudo ruby /usr/share/foreman-installer/generate_answers.rb
 	Darrell says I need this
 [ ] sudo yum install libvirt
 [ ] sudo service libvirtd restart
-[ ] sudo yum install bind
-[ ] sudo yum install bind-chroot
-	* per http://sysadminpy.com/sysadmin/2012/04/05/setting-up-foreman-on-centosrhel-57-part-2/#foreman_dependencies
-	* all this bind stuff should be earlier
-[ ] sudo yum install bind-libs
-	* ditto
-[ ] followed instructions here to set up chrooted dns
-
 [ ] added this to sudoer:
 Defaults:foreman-proxy !requiretty
 foreman-proxy ALL = NOPASSWD: /usr/bin/puppet
@@ -158,10 +155,7 @@ did this per: http://projects.theforeman.org/projects/1/wiki/Troubleshooting
 rm ~foreman/Gemfile.lock
 cd ~foreman 
 bundle install --local
-[ ] added foreman-proxy to the named group:
-usermod -a -G named foreman-proxy
-so that this test will pass:
-[ ] man issue might be that the MAC field is hidden, using client side mojo to make it visible
+[SKIPPABLE?] man issue might be that the MAC field is hidden, using client side mojo to make it visible
 [ ] new error, reverse DNS for matrix failing
 [ ] added it to the hosts file
 [ ] hacked my way through getting dns server working

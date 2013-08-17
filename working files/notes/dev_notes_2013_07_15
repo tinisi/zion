@@ -3,6 +3,9 @@
 # 7/15/2013
 #
 
+
+fab install --hosts=zion.tinisi.com
+
 # 7/27/2013
 
 to test the current code:
