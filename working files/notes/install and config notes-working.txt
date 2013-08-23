@@ -56,11 +56,29 @@
 [X] sudo yum install bind-utils
 [X] sudo yum install bind-libs
 [X] sudo yum install bind
-[ ] sudo yum install bind-chroot
+[X] sudo yum install bind-chroot
+[X] followed instructions here to set up chrooted dns
 	* per http://sysadminpy.com/sysadmin/2012/04/05/setting-up-foreman-on-centosrhel-57-part-2/#foreman_dependencies
-	* all this bind stuff should be earlier
-	* ditto
-[ ] followed instructions here to set up chrooted dns
+	# cd /var/named/chroot/etc
+	# dnssec-keygen -a HMAC-MD5 -b 128 -n HOST foreman
+
+	# cat Kforeman.+157+51238.key
+	foreman. IN KEY 512 3 157 [..key..]
+	# cat Kforeman.+157+51238.private
+	Private-key-format: v1.2
+	Algorithm: 157 (HMAC_MD5)
+	Key: [..key..]
+
+	(use same as DHCP grep to pull out secret)
+
+config notes:
+
+build dns_admin_email from general admin_email replacing @ with .
+generate foreman_dns_key
+generate dns_hostname from full_domain_name (split on ., use first element)
+generate reverse_ip_sub (split ip on ., drop last segment and reverse order, ie 0.168.192)
+generate ip_sub (split ip on ., drop last segment, ie 192.168.0 )
+generate dns_domain_name from full_domain_name (split on ., use all but first elements)
 
 # install
     dhcp.install

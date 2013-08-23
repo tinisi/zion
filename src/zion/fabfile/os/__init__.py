@@ -35,7 +35,7 @@ def add_users():
         if 'groups' in user: 
             run('usermod --append --groups %(group_string)s %(name)s' % {"group_string":','.join(user['groups']), "name":user['name'] })
 
-# these can be run as a user with sudo user
+# these should be run as a user with sudo
 
 @task
 def ssh_lockdown():
@@ -64,3 +64,18 @@ def update():
 def add_repos():
     sudo('rpm -ivh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm')
     sudo('rpm -ivh http://yum.puppetlabs.com/el/6/products/i386/puppetlabs-release-6-6.noarch.rpm')
+
+@task
+def configure_selinux():
+    # this is clearly wrong, but breaks chroot'ed named
+    # TODO: figure out a rule set that will work with chrooted bind
+    sudo('setenforce Permissive')
+
+@task
+def configure_iptables():
+    # this is clearly wrong, but breaks chroot'ed named
+    # TODO: figure out a rule set that will work for the final full suite
+    sudo('service iptables save')
+    sudo('service iptables stop')
+    sudo('chkconfig iptables off')
+

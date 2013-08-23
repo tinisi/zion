@@ -1,7 +1,7 @@
-$TTL 86400 
-$ORIGIN 0.168.192.in-addr.arpa.
+$TTL 86400
+$ORIGIN %(reverse_ip_sub)s.in-addr.arpa.
 
-@       IN      SOA     rancho.tinisi.com.      jason.tinisi.com. (
+@       IN      SOA     %(full_domain_name)s.      %(dns_admin_email)s. (
                         2001062501 ; serial
                         21600      ; refresh after 6 hours
                         3600       ; retry after 1 hour
@@ -9,6 +9,6 @@ $ORIGIN 0.168.192.in-addr.arpa.
                         86400 )    ; minimum TTL of 1 day
 
 
-        IN      NS      rancho.
+        IN      NS      %(dns_hostname)s.
 
-10	IN	PTR    rancho.tinisi.com.
+10	IN	PTR    %(full_domain_name)s.
