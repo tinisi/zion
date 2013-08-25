@@ -1,0 +1,6 @@
+#
+# fabric config file
+#
+
+zion_config_file = /Users/tinisi/_Everything/webster manor/sites/project-zion/zion-git/src/zion/config/prod.json
+absolute_path_to_zion = /Users/tinisi/_Everything/webster manor/sites/project-zion/zion-git

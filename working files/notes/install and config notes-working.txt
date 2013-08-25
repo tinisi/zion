@@ -1,155 +1,190 @@
 
-# action log (zion)
+#
+# actions and steps converted to Fabric and Project Zion instructions
+#
 
-[ ] minimal install with GUI installer from CD
-[ ] make dhcp enabled on boot
-	sed s/ONBOOT=no/ONBOOT=yes/ </etc/sysconfig/network-scripts/ifcfg-eth0 >ifcfg-eth0.new
-	mv -f ifcfg-eth0.new /etc/sysconfig/network-scripts/ifcfg-eth0
-	shutdown -r now
-[ ] log on as root, determine IP address
-	
+# manual steps
 
-# action log (rancho)
+[X] instructions for minimal install CD with defaults
 
-manual steps
+[ ] TODO: look for check box to make network "automatic" (changes DHCP to ONBOOT-yes)
 
-[ ] minimal install CD with defaults
-	check box to make network "automatic" (changes DHCP to ONBOOT-yes)
+# pre_install
+	os.enable_sudo (as root)
 
-os.users (run as root?)
+[X] give wheel sudo
+ 	- copy sudo file to temp spot
+	 - use fabric command to un-comment line in default file
+	 - use visudo -q -c -s -f on new file to check it
+	 - swap out the temp file
 
-[ ] made user for tinisi
-[ ] put tinisi in wheel
-[ ] give wheel sudo
- - copy sudo file to temp spot
- - use fabric command to un-comment line in default file
- - use visudo -q -c -s -f on new file to check it
- - swap out the temp file
+# pre_install
+	os.add_users
 
-os.security
+[X] made user for tinisi
+[X] put tinisi in wheel
 
-[ ] change these from default in /etc/ssh/sshd_config
-Port 22 <= this is actually the default
-Protocol 2 <= this is actually the default
-PermitRootLogin no
-UseDNS no
+# install
+	os.ssh_lockdown
 
-os.update
+[X] change these from default in /etc/ssh/sshd_config
+	Port 22 <= this is actually the default
+	Protocol 2 <= this is actually the default
+	PermitRootLogin no
+	UseDNS no
 
-[ ] sudo yum checkupdate
-[ ] sudo yum update
-[ ] log current patch level of everything, yum list command???
+# install
+    os.update
 
-os.utils
+[X] sudo yum checkupdate
+[X} sudo yum update
+[X] yum list installed
 
-yum install patch <== not sure about this, hoping to use fabric features instead
+# install
+	os.add_repos
 
-puppet.install
-
-install puppet
-
-[ ] rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
+[X] rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
 	this adds the EPEL repo to yum:
 	http://fedoraproject.org/wiki/EPEL/FAQ#How_can_I_install_the_packages_from_the_EPEL_software_repository.3F
-[ ] sudo rpm -ivh http://yum.puppetlabs.com/el/6/products/i386/puppetlabs-release-6-6.noarch.rpm
+[X] sudo rpm -ivh http://yum.puppetlabs.com/el/6/products/i386/puppetlabs-release-6-6.noarch.rpm
 	this adds puppet labs to yum repos from here:
 	http://docs.puppetlabs.com/guides/puppetlabs_package_repositories.html
+
+# install
+    bind.install
+
+[X] sudo yum install bind-utils
+[X] sudo yum install bind-libs
+[X] sudo yum install bind
+[X] sudo yum install bind-chroot
+[X] followed instructions here to set up chrooted dns
+	* per http://sysadminpy.com/sysadmin/2012/04/05/setting-up-foreman-on-centosrhel-57-part-2/#foreman_dependencies
+	# cd /var/named/chroot/etc
+	# dnssec-keygen -a HMAC-MD5 -b 128 -n HOST foreman
+
+	# cat Kforeman.+157+51238.key
+	foreman. IN KEY 512 3 157 [..key..]
+	# cat Kforeman.+157+51238.private
+	Private-key-format: v1.2
+	Algorithm: 157 (HMAC_MD5)
+	Key: [..key..]
+
+	(use same as DHCP grep to pull out secret)
+
+config notes:
+
+build dns_admin_email from general admin_email replacing @ with .
+generate foreman_dns_key
+generate dns_hostname from full_domain_name (split on ., use first element)
+generate reverse_ip_sub (split ip on ., drop last segment and reverse order, ie 0.168.192)
+generate ip_sub (split ip on ., drop last segment, ie 192.168.0 )
+generate dns_domain_name from full_domain_name (split on ., use all but first elements)
+
+# install
+    dhcp.install
+
+[X] sudo yum install dhcp
+[X] used pretty much the exact dhcpd.conf file as here:
+	http://sysadminpy.com/sysadmin/2012/04/05/setting-up-foreman-on-centosrhel-57-part-2
+[X] set up dhcpd.conf per this web site:
+	http://www.krizna.com/centos/install-configure-dhcp-server-centos-6/
+
+[X]] generated DHCP key
+sudo dnssec-keygen -r /dev/urandom -a HMAC-MD5 -b 512 -n HOST omapi_key
+sudo cat Komapi_key.+*.private |grep ^Key|cut -d ' ' -f2-
+[..key..]
+[X] chkconfig --levels 235 dhcpd on
+
+# install
+    puppet.install
+
+# install
+    foreman.install
+
+
+(foreman dhcp related tasks)
+[ ] added this to /etc/foreman-proxy/settings.yml
+:dhcp_key_name: omapi_key
+:dhcp_key_secret: [..key..]
+[ ] now issue is proxy log says can't read dhcps conf or leases
+[ ] usermod -a -G dhcpd foreman-proxy
+[ ] made /etc/dhcp world readable and executable
+chmod o=r dhcp
+chmod o=rx ./dhcp
+
+(foreman DNS relates tasks)
+[ ] added foreman-proxy to the named group:
+usermod -a -G named foreman-proxy
+so that this test will pass:
+
+#
+# remaining action log from rancho (steps to convert or delete)
+#
+
 [ ] sudo yum install ruby
 	dependency for puppet
 [ ] sudo yum install puppet
-
-foreman.install
-
 [ ] sudo yum -y install http://yum.theforeman.org/releases/1.1/el6/i386/foreman-release-1.1stable-3.el6.noarch.rpm
-[ ] sudo yum install foreman-libvirt
-	Darrell says I need this
-[ ] sudo yum install libvirt
-[ ] sudo service libvirtd restart
-
 [ ] sudo yum -y install foreman-installer
 [ ] sudo ruby /usr/share/foreman-installer/generate_answers.rb
-
-	[ ] going to have to start over
-
+[ ] going to have to start over
 [ ] sudo vi /etc/sysconfig/network-scripts/ifcfg-eth0
 	followed these instructions to edit:
 	https://gist.github.com/fernandoaleman/2172388
 [ ] sudo vi /etc/sysconfig/network
 	followed these instructions to edit:
 	https://gist.github.com/fernandoaleman/2172388
-[ ] added this to /etc/host.conf
+[SKIPPABPE?] added this to /etc/host.conf
 	order hosts,bind
-[ ] aded this to /etc/hosts
+[SKIPPABLE] aded this to /etc/hosts
 127.0.0.1   localhost localhost.rancho
 ::1         localhost localhost.rancho
 192.168.0.10    rancho.tinisi.com       rancho
 	http://serverfault.com/questions/42909/do-entries-in-local-hosts-files-override-both-forward-and-reverse-name-lookups
-
-	[ ] re-ran installer
-
-	sudo ruby /usr/share/foreman-installer/generate_answers.rb
-
-	[ ] no love, from my laptop I get a null reply from port 80, and connection refused from port 443
-	[ ] from curl on rancho, I see a server error from port 443
-	[ ] logs show error:
-	[ pid=1209 thr=3076786000 file=ext/apache2/Hooks.cpp:884 time=2013-04-20 07:13:24.619 ]: Unexpected error in mod_passenger: Cannot connect to Unix socket '/tmp/passenger.1.0.1175/generation-0/socket': Pe
-
+[ ] re-ran installer
+sudo ruby /usr/share/foreman-installer/generate_answers.rb
+[ ] no love, from my laptop I get a null reply from port 80, and connection refused from port 443
+[ ] from curl on rancho, I see a server error from port 443
+[ ] logs show error:
+[ pid=1209 thr=3076786000 file=ext/apache2/Hooks.cpp:884 time=2013-04-20 07:13:24.619 ]: Unexpected error in mod_passenger: Cannot connect to Unix socket '/tmp/passenger.1.0.1175/generation-0/socket': Pe
 [ ] disabeled iptables firewall
 	per this web site: http://www.cyberciti.biz/faq/disable-linux-firewall-under-centos-rhel-fedora/
 # service iptables save
 # service iptables stop
 # chkconfig iptables off
-
 [ ] now I can see the apache page with internal server error
-
-	[ ] but still no love, so running the installer again as root instead of through sudo
-	[ ] # ruby /usr/share/foreman-installer/generate_answers.rb
-
-[ ] added this to /etc/foreman-proxy/settings.yml
-:dhcp_key_name: omapi_key
-:dhcp_key_secret: [..key..]
-
+[ ] but still no love, so running the installer again as root instead of through sudo
+[ ] # ruby /usr/share/foreman-installer/generate_answers.rb
+[ ] sudo yum install foreman-libvirt
+	Darrell says I need this
+[ ] sudo yum install libvirt
+[ ] sudo service libvirtd restart
 [ ] added this to sudoer:
 Defaults:foreman-proxy !requiretty
 foreman-proxy ALL = NOPASSWD: /usr/bin/puppet
-
 [ ] created a storage pool
 root@rancho ~]# virsh pool-define pool.xml 
 Pool virtimages defined from pool.xml
 
 [root@rancho ~]# virsh pool-autostart virtimages
 Pool virtimages marked as autostarted
-
-	[ ] getting an error after upgrade (Could not find json-1.5.5 in any of the sources (Bundler::GemNotFound)
-	did this per: http://projects.theforeman.org/projects/1/wiki/Troubleshooting
-	rm ~foreman/Gemfile.lock
-	cd ~foreman 
-	bundle install --local
-
-[ ] added foreman-proxy to the named group:
-usermod -a -G named foreman-proxy
-
-	so that this test will pass:
-
-	[ ] main issue might be that the MAC field is hidden, using client side mojo to make it visible
-	[ ] now issue is proxy log says can't read dhcps conf or leases
-	[ ] usermod -a -G dhcpd foreman-proxy
-	[ ] made /etc/dhcp world readable and executable
-	chmod o=r dhcp
-	chmod o=rx ./dhcp
-	[ ] new error, reverse DNS for matrix failing
-	[ ] added it to the hosts file
-	[ ] hacked my way through getting dns server working
-	[ ] this web site seems interesting:
-	https://gist.github.com/frimik/4730558
-
+[ ] getting an error after upgrade (Could not find json-1.5.5 in any of the sources (Bundler::GemNotFound)
+did this per: http://projects.theforeman.org/projects/1/wiki/Troubleshooting
+rm ~foreman/Gemfile.lock
+cd ~foreman 
+bundle install --local
+[SKIPPABLE?] man issue might be that the MAC field is hidden, using client side mojo to make it visible
+[ ] new error, reverse DNS for matrix failing
+[ ] added it to the hosts file
+[ ] hacked my way through getting dns server working
+[ ] this web site seems interesting:
+https://gist.github.com/frimik/4730558
 virsh iface-bridge eth0 br0
 /etc/libvirt/qemu.conf
 	vnc_listen = "0.0.0.0"
 vi 50-se.tmtowtdi-libvirt-local-access.pkla
-
-
 [ ] removed the _mac.html.erb file I created
+
 
 /usr/share/foreman/.libvirt/libvirt-sock
 
@@ -173,7 +208,3 @@ http://itscblog.tamu.edu/startup-guide-for-kvm-on-centos-6/# centOS set up
 This will configure Foreman, Foreman-Proxy, Puppet (including a puppetmaster),
 several puppet environments, TFTP (for provisioning) and sudo (for puppet
 certificate management)
-
-
-
-

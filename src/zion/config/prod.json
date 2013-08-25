@@ -3,20 +3,19 @@
 		"debug": false		
 	},
 	"host_conf": {
-		"rancho.tinisi.com": {
-			"ip": "192.168.0.10",
+		"zion.tinisi.com": {
+			"admin_email":"jgrosz@tinisi.com",
+			"dhcp_conf": {
+				"range_start": "192.168.0.12",
+				"range_end": "192.168.0.20"
+			},
+			"dns_servers":["192.168.0.1"],
+			"full_domain_name":"zion.tinisi.com",
+			"gateway": "192.168.0.1",
+			"ip": "192.168.0.11",
 			"users": [ {
 				"name": "tinisi",
-				"password": "password"
-			}, {
-				"name": "joeblow",
-				"password": "password"
-			} ]
-		},
-		"localhost": {
-			"ip": "192.168.0.12",
-			"users": [ {
-				"name": "tinisi",
+				"groups": [ "wheel", "cdrom" ],
 				"password": "password"
 			}, {
 				"name": "joeblow",

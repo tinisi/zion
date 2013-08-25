@@ -3,6 +3,34 @@
 # 7/15/2013
 #
 
+# current commans
+
+fab install --hosts=zion.tinisi.com
+
+8/23/2013
+
+flailing to get named working
+already added the selinux and iptables stuff to the os script
+
+any of these things might have to be added
+    # chown root named.conf
+    # chmod o=r named.iscdlv.key
+    # chown named:named named.conf
+    # chown named:named /etc/rndc.key
+    # chmod 644 /etc/rndc.key
+
+
+get ntp working
+
+	ntpdate ntp.pool.org
+	hwclock --systohc
+
+rm /var/named/dynamic/managed-keys.bind*
+service named restart
+
+just setting the clock to be closer to correct got DNS forwards working with keys
+look at adding proper ntp set up to system
+
 # 7/27/2013
 
 to test the current code:
