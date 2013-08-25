@@ -3,4 +3,6 @@ from fabric.api import *
 
 @task
 def install():
-  run('touch ~/zion_test/puppet.install')
+    # puppet and dependencies
+    sudo("yum --assumeyes install ruby")
+    sudo("yum --assumeyes install puppet")

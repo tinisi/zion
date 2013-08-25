@@ -10,7 +10,7 @@
 [ ] TODO: look for check box to make network "automatic" (changes DHCP to ONBOOT-yes)
 
 # pre_install
-	os.enable_sudo (as root)
+	centos.enable_sudo (as root)
 
 [X] give wheel sudo
  	- copy sudo file to temp spot
@@ -19,13 +19,13 @@
 	 - swap out the temp file
 
 # pre_install
-	os.add_users
+	centos.add_users
 
 [X] made user for tinisi
 [X] put tinisi in wheel
 
 # install
-	os.ssh_lockdown
+	centos.ssh_lockdown
 
 [X] change these from default in /etc/ssh/sshd_config
 	Port 22 <= this is actually the default
@@ -34,14 +34,14 @@
 	UseDNS no
 
 # install
-    os.update
+    centos.update
 
 [X] sudo yum checkupdate
 [X} sudo yum update
 [X] yum list installed
 
 # install
-	os.add_repos
+	centos.add_repos
 
 [X] rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
 	this adds the EPEL repo to yum:
@@ -71,14 +71,14 @@
 
 	(use same as DHCP grep to pull out secret)
 
-config notes:
+	config notes:
 
-build dns_admin_email from general admin_email replacing @ with .
-generate foreman_dns_key
-generate dns_hostname from full_domain_name (split on ., use first element)
-generate reverse_ip_sub (split ip on ., drop last segment and reverse order, ie 0.168.192)
-generate ip_sub (split ip on ., drop last segment, ie 192.168.0 )
-generate dns_domain_name from full_domain_name (split on ., use all but first elements)
+	build dns_admin_email from general admin_email replacing @ with .
+	generate foreman_dns_key
+	generate dns_hostname from full_domain_name (split on ., use first element)
+	generate reverse_ip_sub (split ip on ., drop last segment and reverse order, ie 0.168.192)
+	generate ip_sub (split ip on ., drop last segment, ie 192.168.0 )
+	generate dns_domain_name from full_domain_name (split on ., use all but first elements)
 
 # install
     dhcp.install
@@ -97,6 +97,10 @@ sudo cat Komapi_key.+*.private |grep ^Key|cut -d ' ' -f2-
 
 # install
     puppet.install
+
+[X] sudo yum install ruby
+	dependency for puppet
+[X] sudo yum install puppet
 
 # install
     foreman.install
@@ -121,9 +125,6 @@ so that this test will pass:
 # remaining action log from rancho (steps to convert or delete)
 #
 
-[ ] sudo yum install ruby
-	dependency for puppet
-[ ] sudo yum install puppet
 [ ] sudo yum -y install http://yum.theforeman.org/releases/1.1/el6/i386/foreman-release-1.1stable-3.el6.noarch.rpm
 [ ] sudo yum -y install foreman-installer
 [ ] sudo ruby /usr/share/foreman-installer/generate_answers.rb
