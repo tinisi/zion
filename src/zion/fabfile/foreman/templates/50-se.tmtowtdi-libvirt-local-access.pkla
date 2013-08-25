@@ -1,0 +1,6 @@
+[Allow foreman libvirt management permissions]
+Identity=unix-user:foreman
+Action=org.libvirt.unix.manage
+ResultAny=yes
+ResultInactive=yes
+ResultActive=yes

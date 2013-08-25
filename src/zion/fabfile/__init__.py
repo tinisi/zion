@@ -24,5 +24,8 @@ def install():
 	# NOTE: bind needs to be installed before dhcp
 	# because of depdendency on dnssec-keygen
 #    dhcp.install()
-    puppet.install()
+#    puppet.install()
+#    foreman.libvirt_dependencies()
 #    foreman.install()
+    foreman.configure_libvirt()
+#    foreman.configure_foremant()

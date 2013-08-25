@@ -105,6 +105,39 @@ sudo cat Komapi_key.+*.private |grep ^Key|cut -d ' ' -f2-
 # install
     foreman.install
 
+[X] sudo yum install foreman-libvirt
+	Darrell says I need this (installed ruby-libvirt instead per)
+[X] sudo yum install libvirt
+[X] sudo service libvirtd restart
+
+[X] sudo yum -y install http://yum.theforeman.org/releases/1.1/el6/i386/foreman-release-1.1stable-3.el6.noarch.rpm
+[X] sudo yum -y install foreman-installer
+[X] sudo ruby /usr/share/foreman-installer/generate_answers.rb
+
+[ ] this web site seems interesting:
+
+https://gist.github.com/frimik/4730558
+virsh iface-bridge eth0 br0
+/etc/libvirt/qemu.conf
+	vnc_listen = "0.0.0.0"
+vi 50-se.tmtowtdi-libvirt-local-access.pkla
+vim /etc/polkit-1/localauthority/50-local.d/50-se.tmtowtdi-libvirt-local-access.pkla:
+	[Allow foreman libvirt management permissions]
+	Identity=unix-user:foreman
+	Action=org.libvirt.unix.manage
+	ResultAny=yes
+	ResultInactive=yes
+	ResultActive=yes
+
+[ ] added this to sudoer:
+Defaults:foreman-proxy !requiretty
+foreman-proxy ALL = NOPASSWD: /usr/bin/puppet
+[ ] created a storage pool
+root@rancho ~]# virsh pool-define pool.xml 
+Pool virtimages defined from pool.xml
+
+[root@rancho ~]# virsh pool-autostart virtimages
+Pool virtimages marked as autostarted
 
 (foreman dhcp related tasks)
 [ ] added this to /etc/foreman-proxy/settings.yml
@@ -125,16 +158,6 @@ so that this test will pass:
 # remaining action log from rancho (steps to convert or delete)
 #
 
-[ ] sudo yum -y install http://yum.theforeman.org/releases/1.1/el6/i386/foreman-release-1.1stable-3.el6.noarch.rpm
-[ ] sudo yum -y install foreman-installer
-[ ] sudo ruby /usr/share/foreman-installer/generate_answers.rb
-[ ] going to have to start over
-[ ] sudo vi /etc/sysconfig/network-scripts/ifcfg-eth0
-	followed these instructions to edit:
-	https://gist.github.com/fernandoaleman/2172388
-[ ] sudo vi /etc/sysconfig/network
-	followed these instructions to edit:
-	https://gist.github.com/fernandoaleman/2172388
 [SKIPPABPE?] added this to /etc/host.conf
 	order hosts,bind
 [SKIPPABLE] aded this to /etc/hosts
@@ -156,43 +179,24 @@ sudo ruby /usr/share/foreman-installer/generate_answers.rb
 [ ] now I can see the apache page with internal server error
 [ ] but still no love, so running the installer again as root instead of through sudo
 [ ] # ruby /usr/share/foreman-installer/generate_answers.rb
-[ ] sudo yum install foreman-libvirt
-	Darrell says I need this
-[ ] sudo yum install libvirt
-[ ] sudo service libvirtd restart
-[ ] added this to sudoer:
-Defaults:foreman-proxy !requiretty
-foreman-proxy ALL = NOPASSWD: /usr/bin/puppet
-[ ] created a storage pool
-root@rancho ~]# virsh pool-define pool.xml 
-Pool virtimages defined from pool.xml
-
-[root@rancho ~]# virsh pool-autostart virtimages
-Pool virtimages marked as autostarted
-[ ] getting an error after upgrade (Could not find json-1.5.5 in any of the sources (Bundler::GemNotFound)
-did this per: http://projects.theforeman.org/projects/1/wiki/Troubleshooting
-rm ~foreman/Gemfile.lock
-cd ~foreman 
-bundle install --local
+[SKIBBABLE] getting an error after upgrade (Could not find json-1.5.5 in any of the sources (Bundler::GemNotFound)
+	did this per: http://projects.theforeman.org/projects/1/wiki/Troubleshooting
+	rm ~foreman/Gemfile.lock
+	cd ~foreman 
+	bundle install --local
 [SKIPPABLE?] man issue might be that the MAC field is hidden, using client side mojo to make it visible
-[ ] new error, reverse DNS for matrix failing
-[ ] added it to the hosts file
-[ ] hacked my way through getting dns server working
-[ ] this web site seems interesting:
-https://gist.github.com/frimik/4730558
-virsh iface-bridge eth0 br0
-/etc/libvirt/qemu.conf
-	vnc_listen = "0.0.0.0"
-vi 50-se.tmtowtdi-libvirt-local-access.pkla
-[ ] removed the _mac.html.erb file I created
-
-
+[SKIPPABLE] new error, reverse DNS for matrix failing
+[SKIPPABLE] added it to the hosts file
+[SKIPPABLE] hacked my way through getting dns server working
+[SKIPPABLE] removed the _mac.html.erb file I created
+(not sure what this is)
 /usr/share/foreman/.libvirt/libvirt-sock
 
+# resources
+
+http://projects.theforeman.org/projects/foreman/wiki/Virtual_Machine_Provisioning
 
 http://projects.theforeman.org/projects/1/wiki/Troubleshooting
-
-# resources
 
 https://www.digitalocean.com/community/articles/initial-server-setup-with-centos-6
 
