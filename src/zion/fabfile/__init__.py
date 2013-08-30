@@ -27,5 +27,5 @@ def install():
 #    puppet.install()
 #    foreman.libvirt_dependencies()
 #    foreman.install()
-    foreman.configure_libvirt()
-#    foreman.configure_foremant()
+#    foreman.configure_libvirt()
+    foreman.configure_foreman()

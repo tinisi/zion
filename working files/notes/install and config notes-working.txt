@@ -107,6 +107,8 @@ sudo cat Komapi_key.+*.private |grep ^Key|cut -d ' ' -f2-
 
 [X] sudo yum install foreman-libvirt
 	Darrell says I need this (installed ruby-libvirt instead per)
+	NOTE: first run, I installed ruby-libvirt, did NOT uninstall it
+	then I found the package foreman-libvirt
 [X] sudo yum install libvirt
 [X] sudo service libvirtd restart
 
@@ -114,13 +116,9 @@ sudo cat Komapi_key.+*.private |grep ^Key|cut -d ' ' -f2-
 [X] sudo yum -y install foreman-installer
 [X] sudo ruby /usr/share/foreman-installer/generate_answers.rb
 
-[ ] this web site seems interesting:
-
-https://gist.github.com/frimik/4730558
-virsh iface-bridge eth0 br0
-/etc/libvirt/qemu.conf
-	vnc_listen = "0.0.0.0"
-vi 50-se.tmtowtdi-libvirt-local-access.pkla
+this web site seems interesting:
+[X] virsh iface-bridge eth0 br0
+[X] vi 50-se.tmtowtdi-libvirt-local-access.pkla
 vim /etc/polkit-1/localauthority/50-local.d/50-se.tmtowtdi-libvirt-local-access.pkla:
 	[Allow foreman libvirt management permissions]
 	Identity=unix-user:foreman
@@ -129,28 +127,42 @@ vim /etc/polkit-1/localauthority/50-local.d/50-se.tmtowtdi-libvirt-local-access.
 	ResultInactive=yes
 	ResultActive=yes
 
-[ ] added this to sudoer:
+[X] added this to sudoer:
 Defaults:foreman-proxy !requiretty
 foreman-proxy ALL = NOPASSWD: /usr/bin/puppet
-[ ] created a storage pool
-root@rancho ~]# virsh pool-define pool.xml 
-Pool virtimages defined from pool.xml
+[X] created a storage pool
+	root@rancho ~]# virsh pool-define pool.xml 
+	Pool virtimages defined from pool.xml
 
-[root@rancho ~]# virsh pool-autostart virtimages
-Pool virtimages marked as autostarted
+	[root@rancho ~]# virsh pool-autostart virtimages
+	Pool virtimages marked as autostarted
 
 (foreman dhcp related tasks)
-[ ] added this to /etc/foreman-proxy/settings.yml
+[X] added this to /etc/foreman-proxy/settings.yml
 :dhcp_key_name: omapi_key
 :dhcp_key_secret: [..key..]
-[ ] now issue is proxy log says can't read dhcps conf or leases
-[ ] usermod -a -G dhcpd foreman-proxy
-[ ] made /etc/dhcp world readable and executable
+
+:dns: false
+:dns: true
+
+:dns_key: /etc/rndc.key
+:dns_key: /var/named/chroot/etc/Kforeman.+157+47825.private
+	ls /var/named/chroot/etc/Kf*.key
+
+#:dhcp_subnets: [192.168.205.0/255.255.255.128, 192.168.205.128/255.255.255.128]
+:dhcp_subnets: [192.168.0.0/255.255.255.0]
+
+#:log_level: DEBUG
+:log_level: DEBUG
+
+[X] now issue is proxy log says can't read dhcps conf or leases
+[X] usermod -a -G dhcpd foreman-proxy
+[X] made /etc/dhcp world readable and executable
 chmod o=r dhcp
 chmod o=rx ./dhcp
 
 (foreman DNS relates tasks)
-[ ] added foreman-proxy to the named group:
+[X] added foreman-proxy to the named group:
 usermod -a -G named foreman-proxy
 so that this test will pass:
 
@@ -167,6 +179,8 @@ so that this test will pass:
 	http://serverfault.com/questions/42909/do-entries-in-local-hosts-files-override-both-forward-and-reverse-name-lookups
 [ ] re-ran installer
 sudo ruby /usr/share/foreman-installer/generate_answers.rb
+[Skippable]/etc/libvirt/qemu.conf
+[Skippable]	vnc_listen = "0.0.0.0"
 [ ] no love, from my laptop I get a null reply from port 80, and connection refused from port 443
 [ ] from curl on rancho, I see a server error from port 443
 [ ] logs show error:
@@ -193,6 +207,8 @@ sudo ruby /usr/share/foreman-installer/generate_answers.rb
 /usr/share/foreman/.libvirt/libvirt-sock
 
 # resources
+
+https://gist.github.com/frimik/4730558
 
 http://projects.theforeman.org/projects/foreman/wiki/Virtual_Machine_Provisioning
 

@@ -3,11 +3,34 @@
 # 7/15/2013
 #
 
-# current commans
+# current commands
 
 fab install --hosts=zion.tinisi.com
 
-8/23/2013
+
+# 8/29/2013
+
+all known steps done, troubleshooting
+
+https://zion.tinisi.com:8443
+
+[ ] had mystery ruby service listening on 8443
+
+	[root@zion dhcp]# ps -aux | grep ruby
+	Warning: bad syntax, perhaps a bogus '-'? See /usr/share/doc/procps-3.2.8/FAQ
+	497       3349  0.0  1.7 122212 33852 ?        S    22:35   0:00 /usr/bin/ruby /usr/share/foreman-proxy/bin/smart-proxy
+	root      3915  0.0  0.0 103236   856 pts/0    S+   22:51   0:00 grep ruby
+	root     32310  0.0  3.0 156312 58140 ?        Ss   Aug25   0:11 /usr/bin/ruby /usr/bin/puppet agent
+	[root@zion dhcp]# kill 3349
+	[root@zion dhcp]# ps -aux | grep ruby
+	Warning: bad syntax, perhaps a bogus '-'? See /usr/share/doc/procps-3.2.8/FAQ
+	root      3929  0.0  0.0 103236   856 pts/0    S+   22:51   0:00 grep ruby
+	root     32310  0.0  3.0 156312 58140 ?        Ss   Aug25   0:11 /usr/bin/ruby /usr/bin/puppet agent
+	[root@zion dhcp]# service foreman start
+	Forem
+
+
+# 8/23/2013
 
 flailing to get named working
 already added the selinux and iptables stuff to the os script
