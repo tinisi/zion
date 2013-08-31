@@ -5,9 +5,8 @@ from .. zion_config_helper import ZionConfigHelper
 
 @task
 def libvirt_dependencies():
-    sudo("yum --assumeyes install foreman-libvirt")
     sudo("yum --assumeyes install libvirt")
-    sudo("service libvirtd restart")
+    sudo("yum --assumeyes install foreman-libvirt")
 
 @task
 def install():
@@ -22,6 +21,8 @@ def configure_libvirt():
     __deploy_polkit_conf()
     __add_foreman_to_suduers()
     __setup_storage_pool()
+    # and restart again
+    sudo("service libvirtd restart")
 
 def __deploy_polkit_conf():
     # no data yet, but stubbing this out to make it easier later
@@ -76,7 +77,7 @@ def __enable_dhcp_proxy():
     proxy_config_file = '/etc/foreman-proxy/settings.yml'
     # the positional arguments for this are file, search, replace
     files.sed(proxy_config_file, ':dhcp: false', ':dhcp: true', use_sudo=True, backup='.zion_bak')
-    files.sed(proxy_config_file, '#:dhcp_subnets: [192.168.205.0/255.255.255.128, 192.168.205.128/255.255.255.128]', ':dhcp_subnets: [192.168.0.0/255.255.255.0]', use_sudo=True, backup='.zion_bak')
+    files.sed(proxy_config_file, '#:dhcp_subnets: \[192.168.205.0/255.255.255.128, 192.168.205.128/255.255.255.128\]', ':dhcp_subnets: [192.168.0.0/255.255.255.0]', use_sudo=True, backup='.zion_bak')
     files.uncomment(proxy_config_file, ':log_level: DEBUG', use_sudo=True, backup='.zion_bak')
 
 def __enable_dns_proxy():
@@ -85,7 +86,7 @@ def __enable_dns_proxy():
 
 def __get_dns_key_path():
     # this assumes that the one key is in a chrooted etc
-    return sudo('ls /var/named/chroot/etc/Kf*.key')
+    return sudo('ls /var/named/chroot/etc/Kf*.private')
 
 def __add_proxy_user_to_groups():
     sudo('usermod -a -G dhcpd foreman-proxy')

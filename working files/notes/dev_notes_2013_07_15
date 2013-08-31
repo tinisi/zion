@@ -7,6 +7,14 @@
 
 fab install --hosts=zion.tinisi.com
 
+# 8/31/2013
+
+seems Foreman is talking to libvirt!!!!!
+I can see drives being created in my storage pool and no errors when I save host
+but DHCP auto suggest of addresses still not working
+and after save of host, nothing is listed in host list and nothing built
+could be at this point I just have wrong recipe of templates
+time to rebuild from scratch and get a note off to db for instructions
 
 # 8/29/2013
 
@@ -29,6 +37,25 @@ https://zion.tinisi.com:8443
 	[root@zion dhcp]# service foreman start
 	Forem
 
+# random troubleshooting
+
+tried to run installer again
+
+echo include foreman_installer | puppet apply --modulepath /usr/share/foreman-installer
+
+got loads of errors related to fqdn
+
+edited puppet.conf, added server to match rancho
+
+manually re-ran commands to shutoff iptables and set permissive ESLinux
+
+then, named would start
+
+error in apache
+/etc/httpd/conf.d/foreman.conf
+ServerName takes one argument, The hostname and port of the server
+
+configs were all f'ed up, probably from re-install attempt, if more of this, time to start over
 
 # 8/23/2013
 
