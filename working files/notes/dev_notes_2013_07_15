@@ -7,6 +7,79 @@
 
 fab install --hosts=zion.tinisi.com
 
+# TODO
+
+[ ] normalize permissions on moved files and templates, tinisi owns some stuff he shouldn't
+[ ] set up sudo with no password for wheel initially
+[ ] add step at the end to change it to sudo with password
+[ ] add setps at the end to put debug level back down from debug
+[ ] get ntp working because when clock is wrong, DNS with keys doesn't work
+[ ] get a handle on which services start when, at the end of everything they should all be started
+[ ] thinking each package should have a "run_all()" method or something like that which is default
+[ ] add a method at the end to spit out the installed packages for logging
+[X] changing sudoers file in a few other places, and not doing the check using visudo
+
+# 9/3/2013
+
+no weird error with mod_passenger
+after install (no reboot) here are some deamons:
+	[root@zion ~]# ps aux | grep foreman
+	497      15476  0.0  1.7 121548 33220 ?        S    12:25   0:00 /usr/bin/ruby /usr/share/foreman-proxy/bin/smart-proxy
+	root     16430  0.0  0.0 103236   852 pts/0    S+   12:33   0:00 grep foreman
+	[root@zion ~]# ps aux | grep named
+	named    13310  0.0  1.3 248528 26424 ?        Ssl  12:14   0:00 /usr/sbin/named -u named -t /var/named/chroot
+	root     16433  0.0  0.0 103240   856 pts/0    S+   12:33   0:00 grep named
+	[root@zion ~]# ps aux | grep dhcp
+	nobody   15626  0.0  0.0  12884   724 ?        S    12:25   0:00 /usr/sbin/dnsmasq --strict-order --local=// --domain-needed --pid-file=/var/run/libvirt/network/default.pid --conf-file= --except-interface lo --bind-interfaces --listen-address 192.168.122.1 --dhcp-range 192.168.122.2,192.168.122.254 --dhcp-leasefile=/var/lib/libvirt/dnsmasq/default.leases --dhcp-lease-max=253 --dhcp-no-override --dhcp-hostsfile=/var/lib/libvirt/dnsmasq/default.hostsfile --addn-hosts=/var/lib/libvirt/dnsmasq/default.addnhosts
+	root     16435  0.0  0.0 103236   852 pts/0    S+   12:34   0:00 grep dhcp
+	[root@zion ~]# ps aux | grep passenger
+	root     16439  0.0  0.0 103236   852 pts/0    S+   12:34   0:00 grep passenger
+
+
+smart proxy setup works, but DNS and DHCP are not showing up in list
+mad a self signed certificate, not sure what that does ;-)
+
+named is started
+
+
+
+# 9/2/2013
+
+notable error:
+
+[zion.tinisi.local] out: Error: Execution of '/usr/bin/yum -d 0 -e 0 -y install mod_passenger' returned 1: 
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: Error Downloading Packages:
+[zion.tinisi.local] out:   mod_passenger-4.0.5-3.el6.x86_64: failure: mod_passenger-4.0.5-3.el6.x86_64.rpm from foreman: [Errno 256] No more mirrors to try.
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: Error: /Stage[main]/Passenger::Install::Redhat/Package[passenger]/ensure: change from absent to present failed: Execution of '/usr/bin/yum -d 0 -e 0 -y install mod_passenger' returned 1: 
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: Error Downloading Packages:
+[zion.tinisi.local] out:   mod_passenger-4.0.5-3.el6.x86_64: failure: mod_passenger-4.0.5-3.el6.x86_64.rpm from foreman: [Errno 256] No more mirrors to try.
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: 
+[
+
+ran this to get the site up:
+
+root@zion conf]# yum -d 0 -e 0 -y install mod_passenger
+[root@zion conf]# 
+[root@zion conf]# yum -d 0 -e 0 -y install mod_passenger
+Package mod_passenger-4.0.5-3.el6.x86_64 already installed and latest version
+[root@zion conf]# apachectl start
+httpd: Could not reliably determine the server's fully qualified domain name, using zion.tinisi.local for ServerName
+[Tue Sep 03 01:28:52 2013] [warn] _default_ VirtualHost overlap on port 443, the first has precedence
+[root@zion conf]# 
+[root@zion conf]# service foreman start
+Foreman is running under passenger                         [PASSED]
+[root@zion conf]# service foreman-proxy start
+Starting foreman-proxy:                                    [  OK  ]
+[root@zion conf]# apachectl restart
+httpd: Could not reliably determine the server's fully qualified domain name, using zion.tinisi.local for ServerName
+[Tue Sep 03 01:30:59 2013] [warn] _default_ VirtualHost overlap on port 443, the first has precedence
+[root@zion conf]# 
+
 # 8/31/2013
 
 seems Foreman is talking to libvirt!!!!!
@@ -19,6 +92,8 @@ time to rebuild from scratch and get a note off to db for instructions
 # 8/29/2013
 
 all known steps done, troubleshooting
+
+random troubleshooting notes
 
 https://zion.tinisi.com:8443
 
@@ -36,8 +111,6 @@ https://zion.tinisi.com:8443
 	root     32310  0.0  3.0 156312 58140 ?        Ss   Aug25   0:11 /usr/bin/ruby /usr/bin/puppet agent
 	[root@zion dhcp]# service foreman start
 	Forem
-
-# random troubleshooting
 
 tried to run installer again
 

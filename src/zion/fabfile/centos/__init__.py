@@ -8,14 +8,18 @@ from .. zion_config_helper import ZionConfigHelper
 @task
 def enable_sudo():
     sudoer_temp_file = '/etc/sudoers.zion_temp'
+    sudoer_file = '/etc/sudoers'
     # make a working file to mess with
-    run('cp -p /etc/sudoers ' + sudoer_temp_file)
+    run('cp -p ' + sudoer_file + ' ' + sudoer_temp_file)
     # remove a comment to allow sudo for all members of wheel
-    files.uncomment(sudoer_temp_file, '%wheel[\t]+ALL=\(ALL\)[\t]+ALL', backup='.zion_bak')
+    # TODO: add step at the end to do this:
+    # files.comment(sudoer_temp_file, '%wheel[\t]+ALL=\(ALL\)[\t]+NOPASSWD:[ ]+ALL', backup='.zion_bak')
+    # files.uncomment(sudoer_temp_file, '%wheel[\t]+ALL=\(ALL\)[\t]+ALL', backup='.zion_bak')
+    files.uncomment(sudoer_temp_file, '%wheel[\t]+ALL=\(ALL\)[\t]+NOPASSWD:[ ]+ALL', backup='.zion_bak')
     # verify that the resulting file is OK according to visudo
-    sudo('visudo -c -q -f ' + sudoer_temp_file)
+    run('visudo -c -q -f ' + sudoer_temp_file)
     # and copy it back in place
-    run('cp -p ' + sudoer_temp_file + ' /etc/sudoers')
+    run('cp -p ' + sudoer_temp_file + ' ' + sudoer_file)
     # clean up (our temp file, leave the backup created by files.uncomment())
     run('rm ' + sudoer_temp_file)
 
@@ -67,8 +71,9 @@ def add_repos():
 
 @task
 def configure_selinux():
-    # this is clearly wrong, but breaks chroot'ed named
+    # this is clearly wrong, but SELinux default rules break chroot'ed named
     # TODO: figure out a rule set that will work with chrooted bind
+    # also, not 100% sure this survives a reboot
     sudo('setenforce Permissive')
 
 @task
@@ -78,4 +83,3 @@ def configure_iptables():
     sudo('service iptables save')
     sudo('service iptables stop')
     sudo('chkconfig iptables off')
-

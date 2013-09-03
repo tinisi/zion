@@ -12,7 +12,7 @@ def install():
     # and turn on the service
     sudo('chkconfig --levels 235 dhcpd on')
 
-def __generate_config():
+def __generate_config(current_host):
     # prep the data packet that will be merged with the template
     zch = ZionConfigHelper(env.zion_config_file, current_host)
     data = zch.get_host_conf('dhcp_conf')
@@ -20,7 +20,7 @@ def __generate_config():
     data['routers'] = zch.get_host_conf('gateway')
     # TODO: not sure if this should be a comma list, only one value now, so it doesn't matter
     data['domain_name_servers'] = ','.join(zch.get_host_conf('dns_servers'))
-    data['domain_name'] = zch.get_host_conf('domain_name')
+    data['domain_name'] = zch.get_host_conf('full_domain_name')
     data['next_server'] = zch.get_host_conf('ip')
     # first we have to make the key
     __generate_dhcp_key()

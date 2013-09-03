@@ -1,4 +1,4 @@
-$ORIGIN tinisi.com.
+$ORIGIN %(dns_domain_name)s.
 $TTL 86400 
 
 @	IN	SOA	%(dns_hostname)s.	%(dns_admin_email)s. (

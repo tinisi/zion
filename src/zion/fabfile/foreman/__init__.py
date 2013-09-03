@@ -3,19 +3,23 @@ from fabric.api import *
 from fabric.contrib import *
 from .. zion_config_helper import ZionConfigHelper
 
+# we need this in several methods below, making it s package level var
+proxy_config_file = '/etc/foreman-proxy/settings.yml'
+
 @task
 def libvirt_dependencies():
     sudo("yum --assumeyes install libvirt")
-    sudo("yum --assumeyes install foreman-libvirt")
 
 @task
 def install():
     sudo("yum --assumeyes -y install http://yum.theforeman.org/releases/1.1/el6/i386/foreman-release-1.1stable-3.el6.noarch.rpm")
+    sudo("yum --assumeyes install foreman-libvirt")
     sudo("yum --assumeyes -y install foreman-installer")
     sudo("echo include foreman_installer | puppet apply --modulepath /usr/share/foreman-installer")
 
 @task
 def configure_libvirt():
+    sudo("service libvirtd start")
     # set up a bridged interface
     sudo("virsh iface-bridge eth0 br0")
     __deploy_polkit_conf()
@@ -35,17 +39,28 @@ def __deploy_polkit_conf():
     sudo('chmod g=r ' + destination)
 
 def __add_foreman_to_suduers():
+    sudoer_temp_file = '/etc/sudoers.zion_temp'
     sudoer_file = '/etc/sudoers'
-    new_suduer_lines = '''Defaults:foreman-proxy !requiretty\
+    # make a working file to mess with
+    sudo('cp -p ' + sudoer_file + ' ' + sudoer_temp_file)
+    sudoer_file = '/etc/sudoers'
+    new_suduer_lines = '''Defaults:foreman-proxy !requiretty\\
 foreman-proxy ALL = NOPASSWD: /usr/bin/puppet'''
     search_string = '# %users  localhost=/sbin/shutdown -h now'
     replace_string = search_string + '\\n\\n' + new_suduer_lines
-    files.sed(sudoer_file, search_string, replace_string, use_sudo=True, backup='.zion_bak')
+    files.sed(sudoer_temp_file, search_string, replace_string, use_sudo=True, backup='.zion_bak')
+    # verify that the resulting file is OK according to visudo
+    sudo('visudo -c -q -f ' + sudoer_temp_file)
+    # and copy it back in place
+    sudo('cp -p ' + sudoer_temp_file + ' ' + sudoer_file)
+    # clean up (our temp file, leave the backup created by files.uncomment())
+    sudo('rm ' + sudoer_temp_file)
 
 def __setup_storage_pool():
     local_pool_file = env.absolute_path_to_zion + '/src/zion/fabfile/foreman/templates/pool.xml'
     put(local_path=local_pool_file, remote_path=None, use_sudo=True)
-    sudo("mkdir /var/lib/libvirt/filesystems")
+# not sure I need this?
+#    sudo("mkdir /var/lib/libvirt/filesystems")
     sudo("virsh pool-define pool.xml")
     sudo("virsh pool-autostart default")
 
@@ -58,15 +73,16 @@ def configure_foreman():
     __setup_dhcp_folder_perms()
 
 def __add_dhcp_to_proxy_config():
-    proxy_config_file = '/etc/foreman-proxy/settings.yml'
     new_proxy_config_lines = ''':dhcp_key_name: omapi_key\\
 :dhcp_key_secret: ''' + __get_dhcp_key()
-    search_string = '#:dhcp_leases: /var/lib/dhcpd/dhcpd.leases'
+    search_string = '#:dhcp_leases: /var/lib/dhcpd/dhcpd\\.leases'
     replace_string = search_string + '\\n\\n' + new_proxy_config_lines
     files.sed(proxy_config_file, search_string, replace_string, use_sudo=True, backup='.zion_bak')
-    files.uncomment(proxy_config_file, ':dhcp_config: /etc/dhcpd.conf', use_sudo=True, backup='.zion_bak')
-    files.uncomment(proxy_config_file, ':dhcp_leases: /var/lib/dhcpd/dhcpd.leases', use_sudo=True, backup='.zion_bak')
-
+    # NOTE: using sed instead of the uncomment() method because I was getting a mysterious sed error
+    # (I think the lack of spaces after the comment in the original document was messing up Fabric)
+    files.sed(proxy_config_file, '#:dhcp_config: /etc/dhcpd', ':dhcp_config: /etc/dhcpd', use_sudo=True, backup='.zion_bak')    
+    files.sed(proxy_config_file, '#:dhcp_leases: /var/lib/dhcpd/dhcpd', ':dhcp_leases: /var/lib/dhcpd/dhcpd', use_sudo=True, backup='.zion_bak')    
+    
 def __get_dhcp_key():
     # this assumes that the one key we want to use has been generated and
     # and left in current user's home directory
@@ -74,11 +90,14 @@ def __get_dhcp_key():
     return sudo("sudo cat Komapi_key.+*.private |grep ^Key|cut -d ' ' -f2-")
 
 def __enable_dhcp_proxy():
-    proxy_config_file = '/etc/foreman-proxy/settings.yml'
     # the positional arguments for this are file, search, replace
     files.sed(proxy_config_file, ':dhcp: false', ':dhcp: true', use_sudo=True, backup='.zion_bak')
-    files.sed(proxy_config_file, '#:dhcp_subnets: \[192.168.205.0/255.255.255.128, 192.168.205.128/255.255.255.128\]', ':dhcp_subnets: [192.168.0.0/255.255.255.0]', use_sudo=True, backup='.zion_bak')
-    files.uncomment(proxy_config_file, ':log_level: DEBUG', use_sudo=True, backup='.zion_bak')
+# todo: remove this later
+# just re-read the comment in the config file, I think this only applies to native MS DHCP
+#    files.sed(proxy_config_file, '#:dhcp_subnets: \[192.168.205.0/255.255.255.128, 192.168.205.128/255.255.255.128\]', ':dhcp_subnets: [192.168.0.0/255.255.255.0]', use_sudo=True, backup='.zion_bak')
+    # NOTE: using sed instead of the uncomment() method because I was getting a mysterious sed error
+    # (I think the lack of spaces after the comment in the original document was messing up Fabric)
+    files.sed(proxy_config_file, '#:log_level: DEBUG', ':log_level: DEBUG', use_sudo=True, backup='.zion_bak')    
 
 def __enable_dns_proxy():
     files.sed(proxy_config_file, ':dns: false', ':dns: true', use_sudo=True, backup='.zion_bak')

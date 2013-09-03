@@ -3,20 +3,20 @@
 		"debug": false		
 	},
 	"host_conf": {
-		"zion.tinisi.com": {
+		"zion.tinisi.local": {
 			"admin_email":"jgrosz@tinisi.com",
 			"dhcp_conf": {
 				"range_start": "192.168.0.12",
 				"range_end": "192.168.0.20"
 			},
-			"dns_servers":["192.168.0.1"],
-			"full_domain_name":"zion.tinisi.com",
+			"dns_servers":["216.165.129.158"],
+			"full_domain_name":"zion.tinisi.local",
 			"gateway": "192.168.0.1",
 			"ip": "192.168.0.11",
 			"users": [ {
 				"name": "tinisi",
-				"groups": [ "wheel", "cdrom" ],
-				"password": "password"
+				"groups": [ "wheel" ],
+				"password": "m00nba53"
 			}, {
 				"name": "joeblow",
 				"password": "password"
