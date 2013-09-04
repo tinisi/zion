@@ -41,7 +41,31 @@ mad a self signed certificate, not sure what that does ;-)
 
 named is started
 
+trying to follow the instructions to move these to etc/foreman-proxy
 
+[root@zion foreman-proxy]# cp /var/lib/puppet/ssl/certs/ca.pem ./
+[root@zion foreman-proxy]# cp /var/lib/puppet/ssl/certs/zion.tinisi.local.pem ./
+[root@zion foreman-proxy]# mkdir private_keys
+[root@zion foreman-proxy]# cp /var/lib/puppet/ssl/private_keys/zion.tinisi.local.pem ./private_keys/
+[root@zion foreman-proxy]# s -al
+-bash: s: command not found
+[root@zion foreman-proxy]# ls -al
+total 28
+drwxr-xr-x.  3 root          root          4096 Sep  3 15:17 .
+drwxr-xr-x. 75 root          root          4096 Sep  3 12:40 ..
+-rw-r--r--.  1 root          root          1887 Sep  3 15:15 ca.pem
+drwxr-xr-x.  2 root          root          4096 Sep  3 15:17 private_keys
+-rw-r--r--.  1 foreman-proxy foreman-proxy 2368 Sep  3 12:25 settings.yml
+-rw-r--r--.  1 foreman-proxy foreman-proxy 2369 Sep  3 12:25 settings.yml.zion_bak
+-rw-r--r--.  1 root          root          1996 Sep  3 15:15 zion.tinisi.local.pem
+
+changed dhcp.conf (changed template and hand edited file on server)
+
+chgrp foreman-proxy dhcp
+chgrp foreman-proxy dhcp/dhcpd.conf
+
+service dhcpd restart
+service foreman-proxy restart
 
 # 9/2/2013
 

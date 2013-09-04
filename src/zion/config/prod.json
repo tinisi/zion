@@ -16,7 +16,7 @@
 			"users": [ {
 				"name": "tinisi",
 				"groups": [ "wheel" ],
-				"password": "m00nba53"
+				"password": "password"
 			}, {
 				"name": "joeblow",
 				"password": "password"
