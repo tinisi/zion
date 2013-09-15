@@ -3,11 +3,340 @@
 # 7/15/2013
 #
 
-# current commans
+# current commands
 
-fab install --hosts=zion.tinisi.com
+fab pre_install --hosts=zion.tinisi.local -u root
 
-8/23/2013
+fab install --hosts=zion.tinisi.local -u tinisi
+
+fab restart_services --hosts=zion.tinisi.local -u tinisi
+
+# TODO
+
+[ ] normalize permissions on moved files and templates, tinisi owns some stuff he shouldn't
+[X] set up sudo with no password for wheel initially
+[ ] add step at the end to change it to sudo with password
+[ ] add setps at the end to put debug level back down from debug
+[ ] get ntp working because when clock is wrong, DNS with keys doesn't work
+[ ] get a handle on which services start when, at the end of everything they should all be started
+[ ] thinking each package should have a "run_all()" method or something like that which is default
+[X] add a method at the end to spit out the installed packages for logging
+[X] changing sudoers file in a few other places, and not doing the check using visudo
+[ ] these services might need chkconfig commands to make them stay up:
+	libvirtd
+	messagebus
+	foreman-proxy
+	foreman (I think puppet takes care of this)
+
+9/11/2013
+
+service jboss-as start
+
+getting an error about log files
+
+cd /usr/share/jboss-as/standalone/
+
+[root@zion log]# chown jboss-as boot.log 
+[root@zion log]# chown jboss-as server.log 
+
+
+9/8/2013
+
+Hah! Looks like I have enough RAM, had a loose memory stick!
+
+output from engine set up
+
+[root@zion ~]# engine-setup
+Welcome to oVirt Engine setup utility
+
+In order to proceed the installer must stop the ovirt-engine service
+Would you like to stop the ovirt-engine service? (yes|no): yes
+ oVirt Engine uses httpd to proxy requests to the application server.
+It looks like the httpd installed locally is being actively used.
+The installer can override current configuration .
+Alternatively you can use JBoss directly (on ports higher than 1024)
+Do you wish to override current httpd configuration and restart the service? ['yes'| 'no']  [yes] : no
+HTTP Port  [8700] : 
+HTTPS Port  [8701] : 
+Host fully qualified domain name. Note: this name should be fully resolvable  [zion.tinisi.local] : 
+zion.tinisi.local did not resolve into an IP address
+User input failed validation, do you still wish to use it? (yes|no): no
+Host fully qualified domain name. Note: this name should be fully resolvable  [zion.tinisi.local] : 
+The IP 192.168.0.11 does not hold a PTR record for the FQDN: zion.tinisi.local
+User input failed validation, do you still wish to use it? (yes|no): yes
+Enter a password for an internal oVirt Engine administrator user (admin@internal) :
+Warning: Weak Password.
+Confirm password :
+Organization Name for the Certificate  [tinisi.local] : Tinisi
+The default storage type you will be using  ['NFS'| 'FC'| 'ISCSI'| 'POSIXFS']  [NFS] : 
+Enter DB type for installation ['remote'| 'local']  [local] : 
+Enter a password for a local oVirt Engine DB admin user (engine) :
+Warning: Weak Password.
+Confirm password :
+Configure NFS share on this server to be used as an ISO Domain? ['yes'| 'no']  [yes] : 
+Local ISO domain path  [/var/lib/exports/iso] : 
+Firewall ports need to be opened.
+The installer can configure iptables automatically overriding the current configuration. The old configuration will be backed up.
+Alternately you can configure the firewall later using an example iptables file found under /etc/ovirt-engine/iptables.example
+Configure iptables ? ['yes'| 'no']: yes
+
+oVirt Engine will be installed using the following configuration:
+=================================================================
+override-httpd-config:         no
+http-port:                     8700
+https-port:                    8701
+host-fqdn:                     zion.tinisi.local
+auth-pass:                     ********
+org-name:                      Tinisi
+default-dc-type:               NFS
+db-remote-install:             local
+db-local-pass:                 ********
+nfs-mp:                        /var/lib/exports/iso
+config-nfs:                    yes
+override-iptables:             yes
+Proceed with the configuration listed above? (yes|no): yes
+
+Installing:
+Configuring oVirt-engine...                              [ DONE ]
+Configuring JVM...                                       [ DONE ]
+Creating CA...                                           [ DONE ]
+Updating ovirt-engine service...                         [ DONE ]
+Setting Database Configuration...                        [ DONE ]
+Setting Database Security...                             [ DONE ]
+Creating Database...                                     [ DONE ]
+Updating the Default Data Center Storage Type...         [ DONE ]
+Editing oVirt Engine Configuration...                    [ DONE ]
+Editing Postgresql Configuration...                      [ DONE ]
+Configuring the Default ISO Domain...                    [ DONE ]
+Configuring Firewall (iptables)...                       [ DONE ]
+Starting ovirt-engine Service...                         [ DONE ]
+
+ **** Installation completed successfully ******
+
+     (Please allow oVirt Engine a few moments to start up.....)
+
+**** To access oVirt Engine browse to http://zion.tinisi.local:8700 ****
+
+Additional information:
+ * There are less than 4096 MBs of available free memory on this machine.
+It is  recommended to have at least 4096 MBs of available memory to run the oVirt Engine.
+ * oVirt Engine CA SSL Certificate SHA1 fingerprint: 6A:48:EE:B2:E1:38:66:51:03:5A:1D:8E:D9:1D:50:10:05:26:6C:C3
+ * SSH Public key fingerprint: 0f:75:fb:2a:92:10:11:b0:20:72:ae:a9:73:bd:a5:04
+ * A default ISO share has been created on this host.
+   If IP based access restrictions are required, please edit /var/lib/exports/iso entry in /etc/exports
+ * The firewall has been updated, the old iptables configuration file was saved to /var/lib/ovirt-engine/backups/iptables.backup.193318-09082013_1962
+ * The installation log file is available at: /var/log/ovirt-engine/engine-setup_2013_09_08_19_25_39.log
+ * Please use the user "admin" and password specified in order to login into oVirt Engine
+ * To configure additional users, first configure authentication domains using the 'engine-manage-domains' utility
+
+9/7/2013
+
+http://www.server-world.info/en/note?os=CentOS_6&p=ovirt
+http://emeraldreverie.org/blog/2012/10/26/creating-development-environment-with/
+
+giving up for now, gonna wipe the machine and make sure the script works.
+
+my ISP will be using ovirt instead of libvirt, and apparently I don't have enough RAM for ovirt.
+
+need to pursue some hardware...fuck
+
+[ ] This didn't make any difference
+enabled tsl in qemu.conf
+
+mkdir /etc/pki/libvirt-vnc
+ln -s /var/lib/puppet/ssl/certs/zion.tinisi.local.pem /etc/pki/libvirt-vnc/server-cert.pem
+ln -s /var/lib/puppet/ssl/private_keys/zion.tinisi.local.pem /etc/pki/libvirt-vnc/server-key.pem
+ln -s /var/lib/puppet/ssl/certs/ca.pem /etc/pki/libvirt-vnc/ca-cert.pem
+
+NOPE!
+
+# following instructions to make ssh keys for foreman user
+
+(decided this is a dead end, NOT adding it to the script)
+
+as root:
+mkdir /usr/share/foreman/.ssh
+chown foreman .ssh
+chmod g=,o= .ssh
+chgrp foreman .ssh
+
+make ssh folder for root
+put foreman key in authoriazed_keys
+had to re-anable remote root log on
+
+using this for address:
+qemu+ssh://root@192.168.0.11/system
+
+per Darrel:
+service dnsmasq stop
+chkconfig dnsmasq off
+
+http://emeraldreverie.org/blog/2012/10/26/creating-development-environment-with/
+
+trying his edit to the network in virsh, adding bootp
+
+also used settings page and set Token_duration to 60 min
+
+looks like restarting mesagebus helped
+
+service messagebus restart
+
+in the Foreman admin web interface:
+* gave admin user ALL roles
+* changed token timeout setting to 60 min
+
+# 9/4/2013
+
+[X] added these to the libvirtd config
+
+key_file = "/var/lib/puppet/ssl/private_keys/zion.tinisi.local.pem"
+cert_file = "/var/lib/puppet/ssl/certs/zion.tinisi.local.pem"
+ca_file = "/var/lib/puppet/ssl/certs/ca.pem"
+
+changed path to dhcpd.conf in proxy config!
+
+http://itscblog.tamu.edu/startup-guide-for-kvm-on-centos-6/
+(might just be able to restart?)
+
+dbus-uuidgen > /var/lib/dbus/machine-id
+service messagebus restart
+
+now I can test the connection to the hypervisor!
+
+# 9/3/2013
+
+no weird error with mod_passenger
+after install (no reboot) here are some deamons:
+	[root@zion ~]# ps aux | grep foreman
+	497      15476  0.0  1.7 121548 33220 ?        S    12:25   0:00 /usr/bin/ruby /usr/share/foreman-proxy/bin/smart-proxy
+	root     16430  0.0  0.0 103236   852 pts/0    S+   12:33   0:00 grep foreman
+	[root@zion ~]# ps aux | grep named
+	named    13310  0.0  1.3 248528 26424 ?        Ssl  12:14   0:00 /usr/sbin/named -u named -t /var/named/chroot
+	root     16433  0.0  0.0 103240   856 pts/0    S+   12:33   0:00 grep named
+	[root@zion ~]# ps aux | grep dhcp
+	nobody   15626  0.0  0.0  12884   724 ?        S    12:25   0:00 /usr/sbin/dnsmasq --strict-order --local=// --domain-needed --pid-file=/var/run/libvirt/network/default.pid --conf-file= --except-interface lo --bind-interfaces --listen-address 192.168.122.1 --dhcp-range 192.168.122.2,192.168.122.254 --dhcp-leasefile=/var/lib/libvirt/dnsmasq/default.leases --dhcp-lease-max=253 --dhcp-no-override --dhcp-hostsfile=/var/lib/libvirt/dnsmasq/default.hostsfile --addn-hosts=/var/lib/libvirt/dnsmasq/default.addnhosts
+	root     16435  0.0  0.0 103236   852 pts/0    S+   12:34   0:00 grep dhcp
+	[root@zion ~]# ps aux | grep passenger
+	root     16439  0.0  0.0 103236   852 pts/0    S+   12:34   0:00 grep passenger
+
+
+smart proxy setup works, but DNS and DHCP are not showing up in list
+mad a self signed certificate, not sure what that does ;-)
+
+named is started
+
+trying to follow the instructions to move these to etc/foreman-proxy
+
+[root@zion foreman-proxy]# cp /var/lib/puppet/ssl/certs/ca.pem ./
+[root@zion foreman-proxy]# cp /var/lib/puppet/ssl/certs/zion.tinisi.local.pem ./
+[root@zion foreman-proxy]# mkdir private_keys
+[root@zion foreman-proxy]# cp /var/lib/puppet/ssl/private_keys/zion.tinisi.local.pem ./private_keys/
+[root@zion foreman-proxy]# s -al
+-bash: s: command not found
+[root@zion foreman-proxy]# ls -al
+total 28
+drwxr-xr-x.  3 root          root          4096 Sep  3 15:17 .
+drwxr-xr-x. 75 root          root          4096 Sep  3 12:40 ..
+-rw-r--r--.  1 root          root          1887 Sep  3 15:15 ca.pem
+drwxr-xr-x.  2 root          root          4096 Sep  3 15:17 private_keys
+-rw-r--r--.  1 foreman-proxy foreman-proxy 2368 Sep  3 12:25 settings.yml
+-rw-r--r--.  1 foreman-proxy foreman-proxy 2369 Sep  3 12:25 settings.yml.zion_bak
+-rw-r--r--.  1 root          root          1996 Sep  3 15:15 zion.tinisi.local.pem
+
+
+[X] changed dhcp.conf (changed template and hand edited file on server)
+(need to add these to the script)
+[X] chgrp foreman-proxy dhcp
+[X] chgrp foreman-proxy dhcp/dhcpd.conf
+
+# 9/2/2013
+
+notable error:
+
+[zion.tinisi.local] out: Error: Execution of '/usr/bin/yum -d 0 -e 0 -y install mod_passenger' returned 1: 
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: Error Downloading Packages:
+[zion.tinisi.local] out:   mod_passenger-4.0.5-3.el6.x86_64: failure: mod_passenger-4.0.5-3.el6.x86_64.rpm from foreman: [Errno 256] No more mirrors to try.
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: Error: /Stage[main]/Passenger::Install::Redhat/Package[passenger]/ensure: change from absent to present failed: Execution of '/usr/bin/yum -d 0 -e 0 -y install mod_passenger' returned 1: 
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: Error Downloading Packages:
+[zion.tinisi.local] out:   mod_passenger-4.0.5-3.el6.x86_64: failure: mod_passenger-4.0.5-3.el6.x86_64.rpm from foreman: [Errno 256] No more mirrors to try.
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: 
+[
+
+ran this to get the site up:
+
+root@zion conf]# yum -d 0 -e 0 -y install mod_passenger
+[root@zion conf]# 
+[root@zion conf]# yum -d 0 -e 0 -y install mod_passenger
+Package mod_passenger-4.0.5-3.el6.x86_64 already installed and latest version
+[root@zion conf]# apachectl start
+httpd: Could not reliably determine the server's fully qualified domain name, using zion.tinisi.local for ServerName
+[Tue Sep 03 01:28:52 2013] [warn] _default_ VirtualHost overlap on port 443, the first has precedence
+[root@zion conf]# 
+[root@zion conf]# service foreman start
+Foreman is running under passenger                         [PASSED]
+[root@zion conf]# service foreman-proxy start
+Starting foreman-proxy:                                    [  OK  ]
+[root@zion conf]# apachectl restart
+httpd: Could not reliably determine the server's fully qualified domain name, using zion.tinisi.local for ServerName
+[Tue Sep 03 01:30:59 2013] [warn] _default_ VirtualHost overlap on port 443, the first has precedence
+[root@zion conf]# 
+
+# 8/31/2013
+
+seems Foreman is talking to libvirt!!!!!
+I can see drives being created in my storage pool and no errors when I save host
+but DHCP auto suggest of addresses still not working
+and after save of host, nothing is listed in host list and nothing built
+could be at this point I just have wrong recipe of templates
+time to rebuild from scratch and get a note off to db for instructions
+
+# 8/29/2013
+
+all known steps done, troubleshooting
+
+random troubleshooting notes
+
+https://zion.tinisi.com:8443
+
+[ ] had mystery ruby service listening on 8443
+
+	[root@zion dhcp]# ps -aux | grep ruby
+	Warning: bad syntax, perhaps a bogus '-'? See /usr/share/doc/procps-3.2.8/FAQ
+	497       3349  0.0  1.7 122212 33852 ?        S    22:35   0:00 /usr/bin/ruby /usr/share/foreman-proxy/bin/smart-proxy
+	root      3915  0.0  0.0 103236   856 pts/0    S+   22:51   0:00 grep ruby
+	root     32310  0.0  3.0 156312 58140 ?        Ss   Aug25   0:11 /usr/bin/ruby /usr/bin/puppet agent
+	[root@zion dhcp]# kill 3349
+	[root@zion dhcp]# ps -aux | grep ruby
+	Warning: bad syntax, perhaps a bogus '-'? See /usr/share/doc/procps-3.2.8/FAQ
+	root      3929  0.0  0.0 103236   856 pts/0    S+   22:51   0:00 grep ruby
+	root     32310  0.0  3.0 156312 58140 ?        Ss   Aug25   0:11 /usr/bin/ruby /usr/bin/puppet agent
+	[root@zion dhcp]# service foreman start
+	Forem
+
+tried to run installer again
+
+echo include foreman_installer | puppet apply --modulepath /usr/share/foreman-installer
+
+got loads of errors related to fqdn
+
+edited puppet.conf, added server to match rancho
+
+manually re-ran commands to shutoff iptables and set permissive ESLinux
+
+then, named would start
+
+error in apache
+/etc/httpd/conf.d/foreman.conf
+ServerName takes one argument, The hostname and port of the server
+
+configs were all f'ed up, probably from re-install attempt, if more of this, time to start over
+
+# 8/23/2013
 
 flailing to get named working
 already added the selinux and iptables stuff to the os script

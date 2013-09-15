@@ -3,6 +3,10 @@ from fabric.api import *
 from fabric.contrib import *
 from .. zion_config_helper import ZionConfigHelper
 
+# we need this in several methods below, making it s package level var
+# the folder where the foreman key lives, since the name will be different
+foreman_key_path = '/var/named/chroot/etc'
+
 @task
 def install():
     # bind and some additions and utils we'll need
@@ -13,10 +17,14 @@ def install():
     # set it to start automagically
     sudo('chkconfig --level 35 named on')
     sudo('service named start')
+    # we need to stop it now or the conf file will be locked
+    sudo('service named stop')
     # set up all the configs
     __generate_configs(env.host)
     # and re-start it!
-    sudo('service named restart')
+    sudo('service named start')
+    # we should be up and running...You will respect my authoritah!
+    __replace_resolv()
 
 def __generate_configs(current_host):
     '''
@@ -33,10 +41,14 @@ def __generate_configs(current_host):
     these files:
         foreman.key
         name.conf
-        named.rfc1912.zones
     '''
     # set up some useful shared vars
     template_dir = env.absolute_path_to_zion + '/src/zion/fabfile/bind/templates'
+
+    # this needs to be run once before __get_foreman_dns_key() is run
+    # which is called in __get_config_dict()
+    __generate_foreman_dns_key()
+
     # being a little lazy, all the config share the same merge dict
     data = __get_config_dict(current_host)
 
@@ -49,7 +61,7 @@ def __generate_configs(current_host):
     files.upload_template(ip_sub_template_full_path, ip_sub_full_path, context=data, use_sudo=True, backup=True)
     
     domain_template_full_path = template_dir + '/domain.tld_dot_db'
-    domain_file_name = data['full_domain_name'] + '.db'
+    domain_file_name = data['dns_domain_name'] + '.db'
     domain_full_path = destination_dir_named + '/' + domain_file_name
     files.upload_template(domain_template_full_path, domain_full_path, context=data, use_sudo=True, backup=True)
     
@@ -80,18 +92,18 @@ def __get_config_dict(current_host):
         "dns_domain_name":__get_dns_domain_name(current_host),
         "domain_sub": __get_domain_sub(current_host),
         "full_domain_name": zch.get_host_conf('full_domain_name'),
-        "ip": zch.get_host_conf('ip')
+        "ip": zch.get_host_conf('ip'),
+        "domain_name_servers": ','.join(zch.get_host_conf('dns_servers'))
     }
 
 def __get_foreman_dns_key():
-    # dir to put the key in
-    key_path = '/var/named/chroot/etc'
-    # TODO: using run here instead of sudo() because otherwise this command echo's sudo password (bug?)
-    run('sudo dnssec-keygen  -K ' + key_path + ' -a HMAC-MD5 -b 128 -n HOST foreman')
-    # sudo('dnssec-keygen  -K ' + key_path + ' -a HMAC-MD5 -b 128 -n HOST foreman')
-    secret = sudo("cat " + key_path + "/Kforeman.+*.private |grep ^Key|cut -d ' ' -f2-")
+    secret = sudo("cat " + foreman_key_path + "/Kforeman.+*.private |grep ^Key|cut -d ' ' -f2-")
     return secret
 
+def __generate_foreman_dns_key():
+    # NOTE: using run here instead of sudo() because otherwise this command echo's sudo password (Fabric bug?)
+    run('sudo dnssec-keygen  -K ' + foreman_key_path + ' -a HMAC-MD5 -b 128 -n HOST foreman')
+ 
 def __get_dns_admin_email():
     zch = ZionConfigHelper(env.zion_config_file, env.host)
     admin_email = zch.get_host_conf('admin_email')
@@ -147,3 +159,9 @@ def __get_domain_sub(current_host):
     fqdn_list.pop()
     # join the results back to a dot delimited string
     return '.'.join(fqdn_list)
+
+def __replace_resolv():
+    local_resolv_file = env.absolute_path_to_zion + '/src/zion/fabfile/bind/templates/resolv.conf'
+    remote_resolv_file = '/etc/resolv.conf'
+    put(local_path=local_resolv_file, remote_path=remote_resolv_file, use_sudo=True)
+

@@ -5,7 +5,6 @@ import dhcp
 import bind
 import puppet
 import foreman
-from zion_config_helper import ZionConfigHelper
 
 @task
 def pre_install():
@@ -15,14 +14,25 @@ def pre_install():
 
 @task
 def install():
-#    centos.ssh_lockdown()
-#    centos.update()
-#    centos.add_repos()
-#    centos.configure_selinux()
-#    centos.configure_iptables()
-#    bind.install()
-	# NOTE: bind needs to be installed before dhcp
-	# because of depdendency on dnssec-keygen
-#    dhcp.install()
+    centos.ssh_lockdown()
+    centos.update()
+    centos.add_repos()
+    centos.configure_selinux()
+    centos.configure_iptables()
+    bind.install()
+    # NOTE: bind needs to be installed before dhcp
+    # because of depdendency on dnssec-keygen
+    dhcp.install()
     puppet.install()
-#    foreman.install()
+    foreman.libvirt_dependencies()
+    foreman.install()
+    foreman.configure_libvirt()
+    foreman.configure_foreman()
+
+@task
+def restart_services():
+    centos.restart_services()
+
+@task
+def debug_scratch():
+    pass
