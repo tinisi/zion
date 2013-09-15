@@ -28,3 +28,11 @@ def install():
     foreman.install()
     foreman.configure_libvirt()
     foreman.configure_foreman()
+
+@task
+def restart_services():
+    centos.restart_services()
+
+@task
+def debug_scratch():
+    pass

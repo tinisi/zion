@@ -1,0 +1,50 @@
+(zion_v_1)HEL:zion tinisi$ 
+(zion_v_1)HEL:zion tinisi$ fab restart_services --hosts=zion.tinisi.local -u tinisi
+[zion.tinisi.local] Executing task 'restart_services'
+[zion.tinisi.local] sudo: service libvirtd restart
+[zion.tinisi.local] Login password for 'tinisi': 
+[zion.tinisi.local] out: Stopping libvirtd daemon:         [  OK  ]
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: Starting libvirtd daemon:         [  OK  ]
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: 
+
+[zion.tinisi.local] sudo: service messagebus restart
+[zion.tinisi.local] out: Stopping system message bus:      [  OK  ]
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: Starting system message bus:      [  OK  ]
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: 
+
+[zion.tinisi.local] sudo: service named restart
+[zion.tinisi.local] out: Stopping named:                   [  OK  ]
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: Starting named:                   [  OK  ]
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: 
+
+[zion.tinisi.local] sudo: service dhcpd restart
+[zion.tinisi.local] out: Shutting down dhcpd:              [  OK  ]
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: Starting dhcpd:                   [  OK  ]
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: 
+
+[zion.tinisi.local] sudo: service foreman-proxy restart
+[zion.tinisi.local] out: Stopping foreman-proxy: 
+[zion.tinisi.local] out:                                   [  OK  ]
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: Starting foreman-proxy:           [  OK  ]
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: 
+
+[zion.tinisi.local] sudo: service foreman restart
+[zion.tinisi.local] out: Restarting foreman rails app:     [  OK  ]
+[zion.tinisi.local] out: 
+[zion.tinisi.local] out: 
+
+
+Done.
+Disconnecting from zion.tinisi.local... done.
+(zion_v_1)HEL:zion tinisi$ 
+(zion_v_1)HEL:zion tinisi$ 

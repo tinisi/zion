@@ -22,11 +22,28 @@ def configure_libvirt():
     sudo("service libvirtd start")
     # set up a bridged interface
     sudo("virsh iface-bridge eth0 br0")
+    __add_certs_to_conf()
     __deploy_polkit_conf()
     __add_foreman_to_suduers()
     __setup_storage_pool()
-    # and restart again
+    # TODO: not sure I want this here, might want to put
+    # all the final service stop/starts in the centos package
     sudo("service libvirtd restart")
+    # we need to dissble this
+    sudo("service dnsmasq stop")
+    sudo("chkconfig dnsmasq off")
+
+def __add_certs_to_conf():
+    # TODO: for fuck's sake, this is not doing anything....
+    libvirtd_config_file = '/etc/libvirt/libvirtd.conf'
+    new_libvirtd_config_lines = key_file = '''"/var/lib/puppet/ssl/private_keys/zion.tinisi.local.pem"\\
+cert_file = "/var/lib/puppet/ssl/certs/zion.tinisi.local.pem"\\
+ca_file = "/var/lib/puppet/ssl/certs/ca.pem"'''
+    search_string = '''# TLS x509 certificate configuration\\
+#\\
+'''
+    replace_string = search_string + '\\n\\n' + new_libvirtd_config_lines
+    files.sed(libvirtd_config_file, search_string, replace_string, use_sudo=True, backup='.zion_bak')
 
 def __deploy_polkit_conf():
     # no data yet, but stubbing this out to make it easier later
@@ -80,9 +97,12 @@ def __add_dhcp_to_proxy_config():
     files.sed(proxy_config_file, search_string, replace_string, use_sudo=True, backup='.zion_bak')
     # NOTE: using sed instead of the uncomment() method because I was getting a mysterious sed error
     # (I think the lack of spaces after the comment in the original document was messing up Fabric)
-    files.sed(proxy_config_file, '#:dhcp_config: /etc/dhcpd', ':dhcp_config: /etc/dhcpd', use_sudo=True, backup='.zion_bak')    
+    files.sed(proxy_config_file, '#:dhcp_config: /etc/dhcpd', ':dhcp_config: /etc/dhcp/dhcpd', use_sudo=True, backup='.zion_bak')    
     files.sed(proxy_config_file, '#:dhcp_leases: /var/lib/dhcpd/dhcpd', ':dhcp_leases: /var/lib/dhcpd/dhcpd', use_sudo=True, backup='.zion_bak')    
-    
+    # aparently permissions are important
+    sudo('chgrp foreman-proxy /etc/dhcp')
+    sudo('chgrp foreman-proxy /etc/dhcp/dhcpd.conf')
+
 def __get_dhcp_key():
     # this assumes that the one key we want to use has been generated and
     # and left in current user's home directory

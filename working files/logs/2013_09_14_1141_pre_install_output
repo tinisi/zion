@@ -1,7 +1,7 @@
-(zion_v_1)hel:zion tinisi$ 
-(zion_v_1)hel:zion tinisi$ date
-Tue Sep  3 12:05:43 CDT 2013
-(zion_v_1)hel:zion tinisi$ fab pre_install --hosts=zion.tinisi.local -u root
+(zion_v_1)HEL:zion tinisi$
+(zion_v_1)HEL:zion tinisi$ date
+Sat Sep 14 23:41:29 CDT 2013
+(zion_v_1)HEL:zion tinisi$ fab pre_install --hosts=zion.tinisi.local -u root
 [zion.tinisi.local] Executing task 'pre_install'
 [zion.tinisi.local] run: cp -p /etc/sudoers /etc/sudoers.zion_temp
 [zion.tinisi.local] Login password for 'root': 
@@ -28,6 +28,6 @@ Tue Sep  3 12:05:43 CDT 2013
 
 Done.
 Disconnecting from zion.tinisi.local... done.
-(zion_v_1)hel:zion tinisi$ 
-(zion_v_1)hel:zion tinisi$ date
-Tue Sep  3 12:06:53 CDT 2013
+(zion_v_1)HEL:zion tinisi$ 
+(zion_v_1)HEL:zion tinisi$ date
+Sat Sep 14 23:42:05 CDT 2013

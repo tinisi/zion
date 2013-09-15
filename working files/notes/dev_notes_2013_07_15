@@ -5,19 +5,203 @@
 
 # current commands
 
-fab install --hosts=zion.tinisi.com
+fab pre_install --hosts=zion.tinisi.local -u root
+
+fab install --hosts=zion.tinisi.local -u tinisi
+
+fab restart_services --hosts=zion.tinisi.local -u tinisi
 
 # TODO
 
 [ ] normalize permissions on moved files and templates, tinisi owns some stuff he shouldn't
-[ ] set up sudo with no password for wheel initially
+[X] set up sudo with no password for wheel initially
 [ ] add step at the end to change it to sudo with password
 [ ] add setps at the end to put debug level back down from debug
 [ ] get ntp working because when clock is wrong, DNS with keys doesn't work
 [ ] get a handle on which services start when, at the end of everything they should all be started
 [ ] thinking each package should have a "run_all()" method or something like that which is default
-[ ] add a method at the end to spit out the installed packages for logging
+[X] add a method at the end to spit out the installed packages for logging
 [X] changing sudoers file in a few other places, and not doing the check using visudo
+[ ] these services might need chkconfig commands to make them stay up:
+	libvirtd
+	messagebus
+	foreman-proxy
+	foreman (I think puppet takes care of this)
+
+9/11/2013
+
+service jboss-as start
+
+getting an error about log files
+
+cd /usr/share/jboss-as/standalone/
+
+[root@zion log]# chown jboss-as boot.log 
+[root@zion log]# chown jboss-as server.log 
+
+
+9/8/2013
+
+Hah! Looks like I have enough RAM, had a loose memory stick!
+
+output from engine set up
+
+[root@zion ~]# engine-setup
+Welcome to oVirt Engine setup utility
+
+In order to proceed the installer must stop the ovirt-engine service
+Would you like to stop the ovirt-engine service? (yes|no): yes
+ oVirt Engine uses httpd to proxy requests to the application server.
+It looks like the httpd installed locally is being actively used.
+The installer can override current configuration .
+Alternatively you can use JBoss directly (on ports higher than 1024)
+Do you wish to override current httpd configuration and restart the service? ['yes'| 'no']  [yes] : no
+HTTP Port  [8700] : 
+HTTPS Port  [8701] : 
+Host fully qualified domain name. Note: this name should be fully resolvable  [zion.tinisi.local] : 
+zion.tinisi.local did not resolve into an IP address
+User input failed validation, do you still wish to use it? (yes|no): no
+Host fully qualified domain name. Note: this name should be fully resolvable  [zion.tinisi.local] : 
+The IP 192.168.0.11 does not hold a PTR record for the FQDN: zion.tinisi.local
+User input failed validation, do you still wish to use it? (yes|no): yes
+Enter a password for an internal oVirt Engine administrator user (admin@internal) :
+Warning: Weak Password.
+Confirm password :
+Organization Name for the Certificate  [tinisi.local] : Tinisi
+The default storage type you will be using  ['NFS'| 'FC'| 'ISCSI'| 'POSIXFS']  [NFS] : 
+Enter DB type for installation ['remote'| 'local']  [local] : 
+Enter a password for a local oVirt Engine DB admin user (engine) :
+Warning: Weak Password.
+Confirm password :
+Configure NFS share on this server to be used as an ISO Domain? ['yes'| 'no']  [yes] : 
+Local ISO domain path  [/var/lib/exports/iso] : 
+Firewall ports need to be opened.
+The installer can configure iptables automatically overriding the current configuration. The old configuration will be backed up.
+Alternately you can configure the firewall later using an example iptables file found under /etc/ovirt-engine/iptables.example
+Configure iptables ? ['yes'| 'no']: yes
+
+oVirt Engine will be installed using the following configuration:
+=================================================================
+override-httpd-config:         no
+http-port:                     8700
+https-port:                    8701
+host-fqdn:                     zion.tinisi.local
+auth-pass:                     ********
+org-name:                      Tinisi
+default-dc-type:               NFS
+db-remote-install:             local
+db-local-pass:                 ********
+nfs-mp:                        /var/lib/exports/iso
+config-nfs:                    yes
+override-iptables:             yes
+Proceed with the configuration listed above? (yes|no): yes
+
+Installing:
+Configuring oVirt-engine...                              [ DONE ]
+Configuring JVM...                                       [ DONE ]
+Creating CA...                                           [ DONE ]
+Updating ovirt-engine service...                         [ DONE ]
+Setting Database Configuration...                        [ DONE ]
+Setting Database Security...                             [ DONE ]
+Creating Database...                                     [ DONE ]
+Updating the Default Data Center Storage Type...         [ DONE ]
+Editing oVirt Engine Configuration...                    [ DONE ]
+Editing Postgresql Configuration...                      [ DONE ]
+Configuring the Default ISO Domain...                    [ DONE ]
+Configuring Firewall (iptables)...                       [ DONE ]
+Starting ovirt-engine Service...                         [ DONE ]
+
+ **** Installation completed successfully ******
+
+     (Please allow oVirt Engine a few moments to start up.....)
+
+**** To access oVirt Engine browse to http://zion.tinisi.local:8700 ****
+
+Additional information:
+ * There are less than 4096 MBs of available free memory on this machine.
+It is  recommended to have at least 4096 MBs of available memory to run the oVirt Engine.
+ * oVirt Engine CA SSL Certificate SHA1 fingerprint: 6A:48:EE:B2:E1:38:66:51:03:5A:1D:8E:D9:1D:50:10:05:26:6C:C3
+ * SSH Public key fingerprint: 0f:75:fb:2a:92:10:11:b0:20:72:ae:a9:73:bd:a5:04
+ * A default ISO share has been created on this host.
+   If IP based access restrictions are required, please edit /var/lib/exports/iso entry in /etc/exports
+ * The firewall has been updated, the old iptables configuration file was saved to /var/lib/ovirt-engine/backups/iptables.backup.193318-09082013_1962
+ * The installation log file is available at: /var/log/ovirt-engine/engine-setup_2013_09_08_19_25_39.log
+ * Please use the user "admin" and password specified in order to login into oVirt Engine
+ * To configure additional users, first configure authentication domains using the 'engine-manage-domains' utility
+
+9/7/2013
+
+http://www.server-world.info/en/note?os=CentOS_6&p=ovirt
+http://emeraldreverie.org/blog/2012/10/26/creating-development-environment-with/
+
+giving up for now, gonna wipe the machine and make sure the script works.
+
+my ISP will be using ovirt instead of libvirt, and apparently I don't have enough RAM for ovirt.
+
+need to pursue some hardware...fuck
+
+[ ] This didn't make any difference
+enabled tsl in qemu.conf
+
+mkdir /etc/pki/libvirt-vnc
+ln -s /var/lib/puppet/ssl/certs/zion.tinisi.local.pem /etc/pki/libvirt-vnc/server-cert.pem
+ln -s /var/lib/puppet/ssl/private_keys/zion.tinisi.local.pem /etc/pki/libvirt-vnc/server-key.pem
+ln -s /var/lib/puppet/ssl/certs/ca.pem /etc/pki/libvirt-vnc/ca-cert.pem
+
+NOPE!
+
+# following instructions to make ssh keys for foreman user
+
+(decided this is a dead end, NOT adding it to the script)
+
+as root:
+mkdir /usr/share/foreman/.ssh
+chown foreman .ssh
+chmod g=,o= .ssh
+chgrp foreman .ssh
+
+make ssh folder for root
+put foreman key in authoriazed_keys
+had to re-anable remote root log on
+
+using this for address:
+qemu+ssh://root@192.168.0.11/system
+
+per Darrel:
+service dnsmasq stop
+chkconfig dnsmasq off
+
+http://emeraldreverie.org/blog/2012/10/26/creating-development-environment-with/
+
+trying his edit to the network in virsh, adding bootp
+
+also used settings page and set Token_duration to 60 min
+
+looks like restarting mesagebus helped
+
+service messagebus restart
+
+in the Foreman admin web interface:
+* gave admin user ALL roles
+* changed token timeout setting to 60 min
+
+# 9/4/2013
+
+[X] added these to the libvirtd config
+
+key_file = "/var/lib/puppet/ssl/private_keys/zion.tinisi.local.pem"
+cert_file = "/var/lib/puppet/ssl/certs/zion.tinisi.local.pem"
+ca_file = "/var/lib/puppet/ssl/certs/ca.pem"
+
+changed path to dhcpd.conf in proxy config!
+
+http://itscblog.tamu.edu/startup-guide-for-kvm-on-centos-6/
+(might just be able to restart?)
+
+dbus-uuidgen > /var/lib/dbus/machine-id
+service messagebus restart
+
+now I can test the connection to the hypervisor!
 
 # 9/3/2013
 
@@ -59,13 +243,11 @@ drwxr-xr-x.  2 root          root          4096 Sep  3 15:17 private_keys
 -rw-r--r--.  1 foreman-proxy foreman-proxy 2369 Sep  3 12:25 settings.yml.zion_bak
 -rw-r--r--.  1 root          root          1996 Sep  3 15:15 zion.tinisi.local.pem
 
-changed dhcp.conf (changed template and hand edited file on server)
 
-chgrp foreman-proxy dhcp
-chgrp foreman-proxy dhcp/dhcpd.conf
-
-service dhcpd restart
-service foreman-proxy restart
+[X] changed dhcp.conf (changed template and hand edited file on server)
+(need to add these to the script)
+[X] chgrp foreman-proxy dhcp
+[X] chgrp foreman-proxy dhcp/dhcpd.conf
 
 # 9/2/2013
 
