@@ -1,0 +1,34 @@
+(zion_v_1)hel:zion tinisi$ 
+(zion_v_1)hel:zion tinisi$ date
+Tue Oct 15 21:17:16 CDT 2013
+(zion_v_1)hel:zion tinisi$ fab pre_install --hosts=agentsmith.tinisi.local -u root
+[agentsmith.tinisi.local] Executing task 'pre_install'
+[agentsmith.tinisi.local] run: cp -p /etc/sudoers /etc/sudoers.zion_temp
+[agentsmith.tinisi.local] Login password for 'root': 
+[agentsmith.tinisi.local] run: sed -i.zion_bak -r -e '/%wheel[	]+ALL=\(ALL\)[	]+NOPASSWD:[ ]+ALL/ s/^([[:space:]]*)#[[:space:]]?/\1/g' /etc/sudoers.zion_temp
+[agentsmith.tinisi.local] run: visudo -c -q -f /etc/sudoers.zion_temp
+[agentsmith.tinisi.local] out: /etc/sudoers.zion_temp: parsed OK
+[agentsmith.tinisi.local] out: 
+
+[agentsmith.tinisi.local] run: cp -p /etc/sudoers.zion_temp /etc/sudoers
+[agentsmith.tinisi.local] run: rm /etc/sudoers.zion_temp
+[agentsmith.tinisi.local] run: useradd tinisi
+[agentsmith.tinisi.local] run: echo password| passwd tinisi --stdin $1
+[agentsmith.tinisi.local] out: Changing password for user tinisi.
+[agentsmith.tinisi.local] out: passwd: all authentication tokens updated successfully.
+[agentsmith.tinisi.local] out: 
+
+[agentsmith.tinisi.local] run: usermod --append --groups wheel tinisi
+[agentsmith.tinisi.local] run: useradd joeblow
+[agentsmith.tinisi.local] run: echo password| passwd joeblow --stdin $1
+[agentsmith.tinisi.local] out: Changing password for user joeblow.
+[agentsmith.tinisi.local] out: passwd: all authentication tokens updated successfully.
+[agentsmith.tinisi.local] out: 
+
+
+Done.
+Disconnecting from agentsmith.tinisi.local... done.
+(zion_v_1)hel:zion tinisi$ 
+(zion_v_1)hel:zion tinisi$ 
+(zion_v_1)hel:zion tinisi$ date
+Tue Oct 15 21:18:06 CDT 2013

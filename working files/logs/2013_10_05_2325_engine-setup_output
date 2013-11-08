@@ -1,0 +1,123 @@
+[tinisi@zion ~]$ sudo engine-setup --generate-answer=ovirt_answers.conf
+[ INFO  ] Stage: Initializing
+[ INFO  ] Stage: Environment setup
+          Configuration files: ['/etc/ovirt-engine-setup.conf.d/10-packaging-aio.conf', '/etc/ovirt-engine-setup.conf.d/10-packaging.conf']
+          Log file: /var/log/ovirt-engine/setup/ovirt-engine-setup-20131005232103.log
+          Version: otopi-1.1.1 (otopi-1.1.1-1.el6)
+[ INFO  ] Hardware supports virtualization
+[ INFO  ] Stage: Environment packages setup
+[ INFO  ] Stage: Programs detection
+[ INFO  ] Stage: Environment setup
+[ INFO  ] Stage: Environment customization
+          Configure VDSM on this host? (Yes, No) [No]: Yes
+          Local storage domain path [/var/lib/images]: 
+          Local storage domain name [local_storage]: 
+         
+          --== PACKAGES ==--
+         
+[ INFO  ] Checking for product updates...
+[ INFO  ] No product updates found
+         
+          --== NETWORK CONFIGURATION ==--
+         
+          Host fully qualified DNS name of this server [zion.tinisi.local]: 
+[WARNING] Failed to resolve zion.tinisi.local using DNS, it can be resolved only locally
+          iptables was detected on your computer. Do you wish Setup to configure it? (yes, no) [yes]: yes
+         
+          --== DATABASE CONFIGURATION ==--
+         
+          Where is the database located? (Local, Remote) [Local]: 
+          Setup can configure the local postgresql server automatically for the engine to run. This may conflict with existing applications.
+          Would you like Setup to automatically configure postgresql, or prefer to perform that manually? (Automatic, Manual) [Automatic]: 
+          Using existing credentials
+         
+          --== OVIRT ENGINE CONFIGURATION ==--
+         
+          Engine admin password: 
+          Confirm engine admin password: 
+[WARNING] Password is weak: it is based on a dictionary word
+          Use weak password? (Yes, No) [No]: Yes
+          Application mode (Both, Virt, Gluster) [Both]: 
+          Default storage type: (NFS, FC, ISCSI, POSIXFS) [NFS]: 
+         
+          --== PKI CONFIGURATION ==--
+         
+          Organization name for certificate [tinisi.local]: 
+         
+          --== APACHE CONFIGURATION ==--
+         
+          Setup can configure the default page of the web server to present the application home page. This may conflict with existing applications.
+          Do you wish to set the application as the default page of the web server? (Yes, No) [Yes]: 
+          Setup can configure apache to use SSL using a certificate issued from the internal CA.
+          Do you wish Setup to configure that, or prefer to perform that manually? (Automatic, Manual) [Automatic]: 
+         
+          --== SYSTEM CONFIGURATION ==--
+         
+          Configure an NFS share on this server to be used as an ISO Domain? (Yes, No) [Yes]: 
+          Local ISO domain path [/var/lib/exports/iso]: 
+          Local ISO domain name [ISO_DOMAIN]: 
+         
+          --== END OF CONFIGURATION ==--
+         
+[ INFO  ] Stage: Setup validation
+[WARNING] Less than 16384MB of memory is available
+         
+          --== CONFIGURATION PREVIEW ==--
+         
+          Database name                      : engine
+          Database secured connection        : False
+          Database host                      : localhost
+          Database user name                 : engine
+          Database host name validation      : False
+          Datbase port                       : 5432
+          NFS setup                          : True
+          PKI organization                   : tinisi.local
+          NFS mount point                    : /var/lib/exports/iso
+          Application mode                   : both
+          Firewall manager                   : iptables
+          Host FQDN                          : zion.tinisi.local
+          Datacenter storage type            : nfs
+          Configure local database           : True
+          Set application as default page    : True
+          Configure Apache SSL               : True
+          Configure VDSM on this host        : True
+          Local storage domain directory     : /var/lib/images
+         
+          Please confirm installation settings (OK, Cancel) [OK]:   
+[ INFO  ] Stage: Transaction setup
+[ INFO  ] Stopping engine service
+[ INFO  ] Stage: Misc configuration
+[ INFO  ] Stage: Package installation
+[ INFO  ] Stage: Misc configuration
+[ INFO  ] Initializing PostgreSQL
+[ INFO  ] Creating PostgreSQL database
+[ INFO  ] Configurating PostgreSQL 
+[ INFO  ] Creating database schema
+[ INFO  ] Creating CA
+[ INFO  ] Generating post install configuration file '/etc/ovirt-engine-setup.conf.d/20-setup-ovirt-post.conf'
+[ INFO  ] Stage: Transaction commit
+[ INFO  ] Stage: Closing up
+         
+          --== SUMMARY ==--
+         
+[WARNING] Less than 16384MB of memory is available
+          A default ISO NFS share has been created on this host.
+              If IP based access restrictions are required, edit:
+              entry /var/lib/exports/iso in /etc/exports
+          SSH fingerprint: 74:24:9D:4C:C6:08:8D:62:32:9C:EF:E0:DB:B1:7E:1D
+          Internal CA 61:D5:44:A9:74:33:DE:88:25:19:A0:6D:56:4A:BC:01:41:2F:DC:CF
+          Web access is enabled at:
+              http://zion.tinisi.local:80/ovirt-engine
+              https://zion.tinisi.local:443/ovirt-engine
+          Please use the user "admin" and password specified in order to login into oVirt Engine
+         
+          --== END OF SUMMARY ==--
+         
+[ INFO  ] Starting engine service
+[ INFO  ] Restarting httpd
+ detail: Cannot add Host. SSH authentication failed, verify authentication parameters are correct (Username/Password, public-key etc.) You may refer to the engine.log file for further details.
+[ INFO  ] Stage: Clean up
+          Log file is located at /var/log/ovirt-engine/setup/ovirt-engine-setup-20131005232103.log
+[ INFO  ] Stage: Pre-termination
+[ INFO  ] Stage: Termination
+[ ERROR ] Execution of setup failed
