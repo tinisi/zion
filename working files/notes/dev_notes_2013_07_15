@@ -5,28 +5,160 @@
 
 # current commands
 
+New plan, 2 hardware machines, agentsmith for The Foreman, DNS and DHCP and second, zion for oVirt host and management app.
+
+Need to do agentsmith first, since he will have DNS entries for zion.
+
+for agentsmith (The Foreman and Puppet):
+
+need host file on workstation to start
+
+fab pre_install --hosts=agentsmith.tinisi.local -u root
+fab install_foreman --hosts=agentsmith.tinisi.local -u tinisi
+fab restart_foreman_services --hosts=agentsmith.tinisi.local -u tinisi
+
+for zion (oVirt host and management all in one):
+
 fab pre_install --hosts=zion.tinisi.local -u root
-
-fab install --hosts=zion.tinisi.local -u tinisi
-
-fab restart_services --hosts=zion.tinisi.local -u tinisi
+fab install_ovirt --hosts=zion.tinisi.local -u tinisi
 
 # TODO
 
+[ ] get a better handle on which services start when, at the end of everything they should all be started
+[ ] these services might need chkconfig commands to make them stay up:
+  libvirtd
+  messagebus <== I think this is the only one I need to use chkconfig with, not sure I still need it now that using oVirt
+  foreman-proxy
+  foreman (I think Passenger takes care of this)
+[ ] get ntp working because when clock is wrong, DNS with keys doesn't workaround
+  * as a workaround for now add a step to manual config to set clock correctly at BIOS
+[ ] fully remove the libvirt config and installs no longer needed now that we are using ovirt
+  * the method configure_libvirt() will need to be refactored, other actions can just be removed, search the TODOs
 [ ] normalize permissions on moved files and templates, tinisi owns some stuff he shouldn't
+[ ] add step at the end to change to sudo with password
+[ ] add step at the end to put debug level back down from debug
+[X] generalize adding one to n DNS records, need to set up record for zion
+  * refactor all the bind config stuff
+  * make separate method for configuring bind (all the key stuff is there)
+  * and another method that can be run any time that adds one to n host and reverse entries
+[X] manually add DNS entry for zion, change zion to use agentsmith in resolv.conf
+[X] make a generalized way to disallow remote root log in or not
+[LATER] make a step to create hosts file with an arbitrary number of host/ip combos
+  * this could be in a generalized LINUX install script
+[LATER] generalize the initial creation of "static" DNS entries so I can create 1 to n entries based on the host file config
+  * for now "hard coding" the entries for 2 records, this could be in a generalized LINUX install script later
 [X] set up sudo with no password for wheel initially
-[ ] add step at the end to change it to sudo with password
-[ ] add setps at the end to put debug level back down from debug
-[ ] get ntp working because when clock is wrong, DNS with keys doesn't work
-[ ] get a handle on which services start when, at the end of everything they should all be started
-[ ] thinking each package should have a "run_all()" method or something like that which is default
 [X] add a method at the end to spit out the installed packages for logging
 [X] changing sudoers file in a few other places, and not doing the check using visudo
-[ ] these services might need chkconfig commands to make them stay up:
-	libvirtd
-	messagebus
-	foreman-proxy
-	foreman (I think puppet takes care of this)
+[NOPE] thinking each package should have a "run_all()" method or something like that which is default
+  * changing my mind about this, it is so convenient to mix and match methods in the top level package
+[NOPE] implement roles and switch to useing execute()
+  * roles don't work quite like I thought...putting this off and keeping different methods for oVirt machine and Foreman
+[NOPE] need to rebuild zion one more time and figure out how to build answer file
+  * current;y answer file is incomplete, leaving it interactive
+
+10/25/2013
+
+sudo yum --assumeyes install foreman-ovirt
+sudo service foreman restart
+
+10/23/2013
+
+engine-iso-uploader upload -i ISO_DOMAIN 
+
+10/13/2013
+
+192.168.0.10    agentsmith.tinisi.local
+192.168.0.11    zion.tinisi.local
+
+New instructions will be for 2 actual machines. One bare metal install for DNS, DHCP and The Foreman (agentsmith), second for oVirt all in one and management interface.
+
+If instructions are to build agentsmith first, he will have DNS entry for zion.
+
+10/12/2013
+
+Yeah buddy! Got a VM created in oVirt tonight.
+
+I have to hack my way into a VNC connection, but otherwise looks like I am good.
+
+10/11/2013
+
+sudo yum install --assumeyes ovirt-engine-websocket-proxy
+
+can't figure out how to start it...
+
+10/10/2013
+
+w00T!
+I think the install worked
+storage domain connected and host apparently working
+uploading iso of netboot for CentOS6.4 (total guess)
+
+sudo engine-iso-uploader upload -i ISO_DOMAIN CentOS-6.4-x86_64-netinstall.iso
+sudo engine-iso-uploader upload -i ISO_DOMAIN CentOS-6.4-x86_64-minimal.iso
+
+10/9/2013
+
+new hosts file:
+192.168.0.10    rancho.tinisi.local
+192.168.0.11    zion.tinisi.local
+192.168.0.12    host.tinisi.local
+192.168.0.13    storage.tinisi.local
+192.168.0.14    matrix.tinisi.local
+
+10/6/2013
+
+Made separate methods so I can install just oVirt, and then hopefully install Foreman etc on a VM.
+
+command line tool
+http://www.ovirt.org/CLI
+
+sudo engine-setup --generate-answer=ovirt_answers.conf
+
+to complete install, oVirt engine needs to be able to ssh to localhost as root, so changed /etc/sshd_config to allow
+
+10/1/2013
+
+had the issue again with date being off
+set the date, and restarted named
+date -s "Tue Oct 1 21:14:00 CDT 2013"
+
+still no name resolution with my server, getting broken trust chain errors
+changed dnssec-validation no; (was yes)
+
+continued with installer
+
+9/16/2013
+
+Crap.
+
+File "/usr/share/ovirt-engine/scripts/plugins/all_in_one_100.py", line 442, in getCPUFamily
+    raise Exception(ERROR_UNSUPPORTED_CPU_MODEL)
+Exception: Error: This host does not have any of the supported CPU models
+
+    logging.debug("Determening the CPU family supported by the host")
+    families = {'model_Westmere'   : 'Intel Westmere Family',
+                'model_Nehalem'    : 'Intel Nehalem Family',
+                'model_Penryn'     : 'Intel Penryn Family',
+                'model_Conroe'     : 'Intel Conroe Family',
+                'model_Opteron_G3' : 'AMD Opteron G3',
+                'model_Opteron_G2' : 'AMD Opteron G2',
+                'model_Opteron_G1' : 'AMD Opteron G1'}
+
+    # We loop over the list and not the dictionaries because we want to sort it
+    # per our own priorities. (when looping over a dict, we cannot force a certain order)
+    sortedList = ('model_Westmere',
+                  'model_Nehalem',
+                  'model_Penryn',
+                  'model_Conroe',
+                  'model_Opteron_G3',
+                  'model_Opteron_G2',
+                  'model_Opteron_G1')
+
+9/13/2013
+
+sudo yum localinstall http://resources.ovirt.org/releases/ovirt-release-el.noarch.rpm
+
 
 9/11/2013
 

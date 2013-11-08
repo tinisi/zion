@@ -17,7 +17,16 @@ As long as I use the exact same versions of all major systems this should allow 
 1. A human with programming skills and motivation.
 1. A workstation in which said human would like to program
 1. A local network
-1. Some sort of hardware capable of running CentOS 6.4 64bit
+1. Two computers capable of running CentOS 6.4 64bit
+1. One of these machines can be pretty lightweight, and one needs some guts
+1. One machine needs a CPU in one of these families:
+	* Intel Westmere Family
+	* Intel Nehalem Family
+	* Intel Penryn Family
+	* Intel Conroe Family
+	* AMD Opteron G3
+	* AMD Opteron G2
+	* AMD Opteron G1
 1. Project Zion instructions and scripts
 
 ## Why Zion?

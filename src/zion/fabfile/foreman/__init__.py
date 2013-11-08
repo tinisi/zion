@@ -6,17 +6,21 @@ from .. zion_config_helper import ZionConfigHelper
 # we need this in several methods below, making it s package level var
 proxy_config_file = '/etc/foreman-proxy/settings.yml'
 
+# TODO: I think this can be removed now that we are using oVirt
 @task
 def libvirt_dependencies():
     sudo("yum --assumeyes install libvirt")
 
 @task
 def install():
-    sudo("yum --assumeyes -y install http://yum.theforeman.org/releases/1.1/el6/i386/foreman-release-1.1stable-3.el6.noarch.rpm")
-    sudo("yum --assumeyes install foreman-libvirt")
-    sudo("yum --assumeyes -y install foreman-installer")
+    sudo("yum --assumeyes install http://yum.theforeman.org/releases/1.2/el6/x86_64/foreman-release.rpm")
+    sudo("yum --assumeyes install foreman-installer")
+    sudo("yum --assumeyes install foreman-ovirt")
     sudo("echo include foreman_installer | puppet apply --modulepath /usr/share/foreman-installer")
 
+# TODO: leaving in all the libvirt specific stuff for now
+# even though it doesn't apply now that we are using oVirt on another machine
+# to host the VMs
 @task
 def configure_libvirt():
     sudo("service libvirtd start")
@@ -24,12 +28,11 @@ def configure_libvirt():
     sudo("virsh iface-bridge eth0 br0")
     __add_certs_to_conf()
     __deploy_polkit_conf()
-    __add_foreman_to_suduers()
+    # TODO: I think now that we are switching to use oVirt, this is not needed
     __setup_storage_pool()
-    # TODO: not sure I want this here, might want to put
-    # all the final service stop/starts in the centos package
+    # TODO: I think now that we are switching to use oVirt, this is not needed
     sudo("service libvirtd restart")
-    # we need to dissble this
+    # we need to dissble this (not sure why actually)
     sudo("service dnsmasq stop")
     sudo("chkconfig dnsmasq off")
 
@@ -55,6 +58,23 @@ def __deploy_polkit_conf():
     sudo('chown root:root ' + destination)
     sudo('chmod g=r ' + destination)
 
+def __setup_storage_pool():
+    local_pool_file = env.absolute_path_to_zion + '/src/zion/fabfile/foreman/templates/pool.xml'
+    put(local_path=local_pool_file, remote_path=None, use_sudo=True)
+# not sure I need this?
+#    sudo("mkdir /var/lib/libvirt/filesystems")
+    sudo("virsh pool-define pool.xml")
+    sudo("virsh pool-autostart default")
+
+@task
+def configure_foreman():
+    __add_foreman_to_suduers()
+    __add_dhcp_to_proxy_config()
+    __enable_dns_proxy()
+    __enable_dhcp_proxy()
+    __add_proxy_user_to_groups()
+    __setup_dhcp_folder_perms()
+
 def __add_foreman_to_suduers():
     sudoer_temp_file = '/etc/sudoers.zion_temp'
     sudoer_file = '/etc/sudoers'
@@ -72,22 +92,6 @@ foreman-proxy ALL = NOPASSWD: /usr/bin/puppet'''
     sudo('cp -p ' + sudoer_temp_file + ' ' + sudoer_file)
     # clean up (our temp file, leave the backup created by files.uncomment())
     sudo('rm ' + sudoer_temp_file)
-
-def __setup_storage_pool():
-    local_pool_file = env.absolute_path_to_zion + '/src/zion/fabfile/foreman/templates/pool.xml'
-    put(local_path=local_pool_file, remote_path=None, use_sudo=True)
-# not sure I need this?
-#    sudo("mkdir /var/lib/libvirt/filesystems")
-    sudo("virsh pool-define pool.xml")
-    sudo("virsh pool-autostart default")
-
-@task
-def configure_foreman():
-    __add_dhcp_to_proxy_config()
-    __enable_dns_proxy()
-    __enable_dhcp_proxy()
-    __add_proxy_user_to_groups()
-    __setup_dhcp_folder_perms()
 
 def __add_dhcp_to_proxy_config():
     new_proxy_config_lines = ''':dhcp_key_name: omapi_key\\

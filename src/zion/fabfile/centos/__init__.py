@@ -42,13 +42,15 @@ def add_users():
 # these should be run as a user with sudo
 
 @task
-def ssh_lockdown():
+def ssh_lockdown(allow_remote_root=False):
     # we are gonna guts it and work on this one in place (no temp file and swap)
     sshd_config_file = '/etc/ssh/sshd_config'
     # since I have three changes to the same file, making numbered backup extensions
-    files.sed(sshd_config_file, '#PermitRootLogin yes', 'PermitRootLogin no', use_sudo=True, backup='.zion_bak_1')
     files.sed(sshd_config_file, '#UseDNS yes', 'UseDNS no', use_sudo=True, backup='.zion_bak_2')
     files.uncomment(sshd_config_file, 'Port 22', use_sudo=True, backup='.zion_bak_3')
+    # this one takes an argument, defaults to True
+    if not allow_remote_root:
+        files.sed(sshd_config_file, '#PermitRootLogin yes', 'PermitRootLogin no', use_sudo=True, backup='.zion_bak_1')    
     # and restart the service to pick up the changes
     sudo('service sshd restart')
 

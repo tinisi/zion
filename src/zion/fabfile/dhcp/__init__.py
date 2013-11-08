@@ -19,7 +19,9 @@ def __generate_config(current_host):
     # need to add a couple keys to our dict
     data['routers'] = zch.get_host_conf('gateway')
     # TODO: not sure if this should be a comma list, only one value now, so it doesn't matter
-    data['domain_name_servers'] = ','.join(zch.get_host_conf('dns_servers'))
+    # TODO: also, this conflates two things, might want to move this to dhcp_conf key,
+    # instead of reusing the
+    data['domain_name_servers'] = ','.join(zch.get_host_conf('nameservers'))
     data['domain_name'] = zch.get_host_conf('full_domain_name')
     data['next_server'] = zch.get_host_conf('ip')
     # first we have to make the key
