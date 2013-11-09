@@ -93,7 +93,7 @@ cd src/zion
 fab install_foreman --hosts={your.foreman.hostname} -u {a user in the group wheel}  
 *(this is pretty much hands free)*
 
-## On your workstation
+### On your workstation
 
 1. Comment out or delete the nosts file record you made for temporary name resolution for your The Foreman machine
 1. Set the IP address of The Foreman machine as your name server
@@ -114,18 +114,19 @@ fab install_ovirt --hosts={your.ovirt.hostname} -u {a user in the group wheel}
 *(the last stage of this is an interactive installer, you can pretty much accept defaults)*  
 *(I tried to make this non-interactive, set up an answer file, didn't work, don't ask...)*  
 
-## On your workstation
+## oVirt and The Foreman set up
+
+### On your workstation
 
 1. Verify you can get to the hostname of your oVirt machine with your web browser, this server also issued its own SSL certificate, so depending on your browser you'll have to accept the un-trusted certificate
 1. You should be on a nicely formatted page branded with oVirt stuff, click on the Administrative Pages link to get started
-1. This is the best quick start article I have found for next steps. It is written with Fedora as a target, but everything about using the web app to make new VMs is of course the same on CentOS:  
+1. This is the best quick start article I have found for next steps. It is written with Fedora as a target, but everything about using the web app to make new VMs is of course the same on CentOS. I followed steps 5, 6 and 7.
 [http://community.redhat.com/up-and-running-with-ovirt-3-3](http://community.redhat.com/up-and-running-with-ovirt-3-3/)
 1. Once you have the minimum stuff set up on oVirt, a host, a data center and storage you can theoretically use The Foreman for everything else
 1. This main site for The Foreman:  
 [http://www.theforeman.org/](http://www.theforeman.org/)
 1. As I said in the disclaimer, I have not managed to provision a new machine from The Foreman, I did manage to make a new host using oVirt, in short this requires uploading an installer ISO image and then doing the operating system install step by step "manually" using a console
-1. I am on a Mac workstation and the Console link just downloads a .vv file. Apparently as of this writing the web based Spise or VNC console supported by  oVirt is an optional experimental feature. I managed to get a connection by downloading an app called Chicken of the VNC (link below) and then opening up that .vv file in a text editor and getting the display port from the file and entering it into Chicken.  
+1. I am on a Mac workstation and the Console link in the oVIrt admin area just downloads a .vv file. Apparently as of this writing the web based Spice or VNC console supported by  oVirt is an optional experimental feature, and I haven't gotten it working yet. I managed to get a connection by downloading an app called Chicken of the VNC (link below) and then opening up that .vv file in a text editor and getting the display port from the file and entering it into Chicken.  
 [http://sourceforge.net/projects/chicken/](http://sourceforge.net/projects/chicken/)
 1. You will have to either use a hosts file or set up a DNS entry for any new VMs you make using the oVirt interface, notice that once your The Foreman machine is set up, you shuuld be able to add new host entries to the config key "bind_conf" hosts list and re-run JUST the action configure_hosts
 1. Although I was NOT able to provision a new machine using The Foreman, I did get it to see all the VMs I created "manually" using the oVirt once I set up the "Compute Resource" and the web based console biult into The Foreman worked great, so that's cool ;-)
-

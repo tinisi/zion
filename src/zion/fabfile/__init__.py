@@ -64,4 +64,4 @@ def configure_hosts():
 
 @task
 def debug_scratch():
-    bind.configure_hosts()
+    pass

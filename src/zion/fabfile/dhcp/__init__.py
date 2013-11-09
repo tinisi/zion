@@ -20,9 +20,11 @@ def __generate_config(current_host):
     data['routers'] = zch.get_host_conf('gateway')
     # TODO: not sure if this should be a comma list, only one value now, so it doesn't matter
     # TODO: also, this conflates two things, might want to move this to dhcp_conf key,
-    # instead of reusing the
+    # instead of reusing the main name server for the host
     data['domain_name_servers'] = ','.join(zch.get_host_conf('nameservers'))
+    # TODO: this should be same as dns_domain, I should add a dhcp specific config
     data['domain_name'] = zch.get_host_conf('full_domain_name')
+    # TODO: this happens to work, but should probably be in the dhcp_conf object
     data['next_server'] = zch.get_host_conf('ip')
     # first we have to make the key
     __generate_dhcp_key()
