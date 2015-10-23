@@ -4,7 +4,7 @@ from fabric.api import *
 @task
 def install():
     # oVirt here we come!
-    sudo("yum --assumeyes localinstall http://resources.ovirt.org/releases/ovirt-release-el.noarch.rpm")
+    sudo("yum --assumeyes localinstall http://resources.ovirt.org/releases/ovirt-release.noarch.rpm")
     sudo("yum --assumeyes install ovirt-engine-setup-plugin-allinone")
     # TODO: would like to use the command to generate an answer file and make this less interactive
     # tried with current version, and script doesn't generate a complete answer file.

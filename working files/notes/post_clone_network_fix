@@ -1,0 +1,52 @@
+#!/bin/bash
+
+echo "Reparing network after getting new MAC address"
+
+echo "stopping the network"
+
+# stop the network first
+service network stop
+
+echo "deleting the original eth0 from udev rules"
+
+sed -i -r "/(eth0)/d" /etc/udev/rules.d/70-persistent-net.rules
+
+echo "renaming the new interface to eth0"
+sed -i -r "s/(eth1)/eth0/" /etc/udev/rules.d/70-persistent-net.rules
+
+echo "making a new UUID"
+
+# get a new UUID
+new_uuid=`uuidgen`
+
+echo "new UUID: ${new_uuid}"
+
+echo "getting the new MAC address"
+
+# get the value of the MAC address from the fresh fule
+new_mac_addr=`cat /etc/udev/rules.d/70-persistent-net.rules |grep ATTR{address}== |cut -d '"'  -f8`
+
+echo "new MAC address: ${new_mac_addr}"
+
+echo "fixing the files udev rules and network-scripts"
+
+# replace the original MAC address in ifcfg-eth0
+sed -i -r "s/^(HWADDR=)(.*)/\1${new_mac_addr}/" /etc/sysconfig/network-scripts/ifcfg-eth0
+
+# and the UUID
+sed -i -r "s/^(UUID=)(.*)/\1${new_uuid}/" /etc/sysconfig/network-scripts/ifcfg-eth0
+
+echo "deleting and regenerating 70-persistent-net.rules file"
+
+# delete and re-create the 70-persistent-net.rules file
+rm -f  /etc/udev/rules.d/70-persistent-net.rules
+start_udev
+
+echo "starting the network"
+
+# and restart the network
+service network start
+
+echo "and....done"
+
+# EOF

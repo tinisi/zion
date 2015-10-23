@@ -3,6 +3,180 @@
 # 7/15/2013
 #
 
+
+# 5/10/2014
+
+was getting this:
+May 10 09:40:27 agentsmith puppet-master[7606]: Could not find class ntp for testhost.tinisi.local on node testhost.tinisi.local
+
+even though the classes were installed in the environments that agent smith knows about
+
+installed them in the "normal place"
+puppet module install puppetlabs-ntp --modulepath=/etc/puppet/modules
+
+and now...
+
+## might need this for setting up report.rb
+
+SETTINGS = {
+  :url          => "https://agentsmith.tinisi.local",  # e.g. https://foreman.example.com
+  :puppetdir    => "/var/lib/puppet",  # e.g. /var/lib/puppet
+  :facts        => true,          # true/false to upload facts
+  :timeout      => 10,
+  # if CA is specified, remote Foreman host will be verified
+  :ssl_ca       => "/var/lib/puppet/ssl/certs/ca.pem",      # e.g. /var/lib/puppet/ssl/certs/ca.pem
+  # ssl_cert and key are required if require_ssl_puppetmasters is enabled in Foreman
+  :ssl_cert     => "/var/lib/puppet/ssl/certs/agentsmith.tinisi.local.pem",    # e.g. /var/lib/puppet/ssl/certs/FQDN.pem
+  :ssl_key      => "/var/lib/puppet/ssl/private_keys/agentsmith.tinisi.local.pem"      # e.g. /var/lib/puppet/ssl/private_keys/FQDN.pem
+}
+
+# 5/6/2014
+
+puppet module install puppetlabs-ntp --modulepath=/etc/puppet/modules
+
+puppet module install puppetlabs-ntp --modulepath=/etc/puppet/environments/zionEnv/modules
+
+puppet module install puppetlabs-ntp --modulepath=/etc/puppet/environments/zionEnv/modules
+
+puppet module uninstall puppetlabs-stdlib --modulepath=/etc/puppet/environments/production/modules
+
+
+# 5/4/2014
+
+on agent smith
+
+puppet module install puppetlabs-apache --modulepath=/etc/puppet/modules
+
+# 5/2/2014
+
+on testhost:
+
+added this to puppet.conf, because I saw it on the master:
+# Puppet 3.0.x requires this in both [main] and [master] - harmless on agents
+autosign       = $confdir/autosign.conf { mode = 664 }
+
+made an empty file owned by puppet:puppet autosign.conf
+
+from lc:
+
+rm -f /var/lib/puppet/ssl/certs/lc.tinisi.local.pem
+rm -f /var/lib/puppet/ssl/certs/certificate_requests/lc.tinisi.local.pem
+puppet agent --server agentsmith.tinisi.local.pem --waitforcert 60 --test
+
+from agentsmith:
+
+puppet cert list --all
+puppet cert --sign lc.tinisi.local
+
+from testhost:
+
+rm -f /var/lib/puppet/ssl/certs/testhost.tinisi.local.pem
+rm -f /var/lib/puppet/ssl/certs/certificate_requests/testhost.tinisi.local.pem
+puppet agent --server agentsmith.tinisi.local --waitforcert 60 --test
+
+puppet agent --test --waitforcert 30
+
+from agentsmith:
+
+puppet cert list --all
+puppet cert --sign teshost.tinisi.local
+
+# old notes
+
+date +%T -s "03:42:00"
+
+tinisi@agentsmith ~]$ sudo puppet cert clean --all
+Notice: Revoked certificate with serial 4
+Notice: Revoked certificate with serial 3
+Notice: Revoked certificate with serial 6
+Notice: Revoked certificate with serial 2
+Notice: Removing file Puppet::SSL::Certificate lc.tinisi.local at '/var/lib/puppet/ssl/ca/signed/lc.tinisi.local.pem'
+Notice: Removing file Puppet::SSL::Certificate lc.tinisi.local at '/var/lib/puppet/ssl/certs/lc.tinisi.local.pem'
+Notice: Removing file Puppet::SSL::Certificate testhost.tinisi.local at '/var/lib/puppet/ssl/ca/signed/testhost.tinisi.local.pem'
+Notice: Removing file Puppet::SSL::Certificate testhost.tinisi.local at '/var/lib/puppet/ssl/certs/testhost.tinisi.local.pem'
+Notice: Removing file Puppet::SSL::Certificate pip.tinisi.local at '/var/lib/puppet/ssl/ca/signed/pip.tinisi.local.pem'
+Notice: Removing file Puppet::SSL::Certificate pip.tinisi.local at '/var/lib/puppet/ssl/certs/pip.tinisi.local.pem'
+Notice: Removing file Puppet::SSL::Certificate agentsmith.tinisi.local at '/var/lib/puppet/ssl/ca/signed/agentsmith.tinisi.local.pem'
+Notice: Removing file Puppet::SSL::Certificate agentsmith.tinisi.local at '/var/lib/puppet/ssl/certs/agentsmith.tinisi.local.pem'
+Notice: Removing file Puppet::SSL::Key agentsmith.tinisi.local at '/var/lib/puppet/ssl/private_keys/agentsmith.tinisi.local.pem'
+[tinisi@agentsmith ~]$ sudo puppet cert list
+[tinisi@agentsmith ~]$ sudo puppet cert list --all
+[tinisi@agentsmith ~]$ sudo puppet cert list --all
+[tinisi@agentsmith ~]$ 
+
+
+
+
+# 4/17/2014
+
+trying preseed family, debian
+having problems with keymap dialog
+and domain name dialog
+
+# 4/12/2014
+
+* associate template
+PXE Default File - should not need changing
+RHEL Kickstart default
+
+Anaconda is the system installer
+Kickstart - file
+
+Preseed is debian
+
+# hand work
+
+Used oVirt web interface 
+  force remove Default DataCenter
+
+sudo yum update foreman* ruby*
+(won't have to do this with a new install)
+
+deleted compute resource, got query error looking for datacenter
+
+renamed local_cluster to localcluster
+can't rename data center
+make a new one
+
+making a home/ovirt folder for local storage
+
+in the oVirt install, rename data center something without an underscore
+
+upgrading oVirt 
+
+yum update ovirt-engine-setup*
+
+engine-setup
+
+oVirt 3.3.5
+Foreman 1.4.2
+
+hand edit to kickstart RHEL to add
+repo --baseurl
+
+http://fedoraproject.org/wiki/Anaconda/Kickstart
+
+# to make a VM
+
+New VM
+Step through Advanced options
+Do NOT select a CD image here
+Add storage
+Go to list, select VM and choose Run Once
+Attach an ISO as CD drive with whatever you want to install
+After a delay, indicator will turn green
+Right click and choose Console
+If you have your browser set to open .vv files with some kind of VNC viewer, you should be connected
+If (like me) you are on a Mac and don't have a VNC client installed, open the .vv file in a text editor
+Download Chicken of the VNC
+Make a new connection in Chicken, no need to save anything
+Get the port and password from that .vv file (apparently port in the file is)
+
+# post install commands
+
+engine-iso-uploader upload -i ZION_ISO_DOMAIN CentOS-6.4-x86_64-minimal.iso
+engine-iso-uploader upload -i ZION_ISO_DOMAIN debian-7.2.0-amd64-netinst.iso
+
 # current commands
 
 New plan, 2 hardware machines, agentsmith for The Foreman, DNS and DHCP and second, zion for oVirt host and management app.
@@ -21,6 +195,8 @@ for zion (oVirt host and management all in one):
 
 fab pre_install --hosts=zion.tinisi.local -u root
 fab install_ovirt --hosts=zion.tinisi.local -u tinisi
+
+fab bind.configure_hosts --hosts=agentsmith.tinisi.local -u tinisi
 
 # TODO
 

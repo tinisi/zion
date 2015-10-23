@@ -3,6 +3,7 @@ from fabric.api import *
 from fabric.contrib import *
 from .. zion_config_helper import ZionConfigHelper
 from datetime import date
+from random import randint
 
 # we need these in several methods below, making it s package level var
 # the folder where the foreman key lives, since the name will be different
@@ -95,6 +96,8 @@ def configure_hosts():
     domain_file_name = data['dns_domain'] + '.db'
     domain_full_path = destination_dir_named + '/' + domain_file_name
     files.upload_template(domain_template_full_path, domain_full_path, context=data, use_sudo=True, backup=True)
+    # add a chown
+    # sudo('chown -R named.named' )destination_dir_named
 
 @task
 def restart_named():
@@ -168,7 +171,7 @@ def __get_reverse_ip_sub(current_host):
 
 def __get_dns_serial_no():
     today = date.today()
-    return today.strftime("%Y%m%d01")
+    return today.strftime("%Y%m%d0" + str(randint(0,9)) )
 
 def __get_nameserver_hostname(current_host):
     # just return the first item

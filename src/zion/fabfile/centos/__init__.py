@@ -73,8 +73,8 @@ def add_repos():
 
 @task
 def configure_selinux():
-    # this is clearly wrong, but SELinux default rules break chroot'ed named
-    # TODO: figure out a rule set that will work with chrooted bind and whatever else we need
+    # this really just turns off selinux!
+    # TODO: not really a good idea, try to find better way
     selinux_config_file = '/etc/selinux/config'
     # the positional arguments for this are file, search, replace
     files.sed(selinux_config_file, 'SELINUX=enforcing', 'SELINUX=permissive', use_sudo=True, backup='.zion_bak')    

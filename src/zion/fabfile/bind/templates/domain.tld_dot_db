@@ -2,7 +2,7 @@ $ORIGIN %(dns_domain)s.
 $TTL 86400 
 
 @	IN	SOA	%(nameserver_hostname)s.	%(dns_admin_email)s. (
-			2001062501 ; serial
+			%(dns_serial_no)s ; serial
 			21600      ; refresh after 6 hours
 			3600       ; retry after 1 hour
 			604800     ; expire after 1 week

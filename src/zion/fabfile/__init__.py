@@ -11,8 +11,8 @@ from zion_config_helper import ZionConfigHelper
 @task
 def pre_install():
     # this should be all the steps that must be run as root
- 	centos.enable_sudo()
- 	centos.add_users()
+    centos.enable_sudo()
+    centos.add_users()
 
 @task
 def install_ovirt():

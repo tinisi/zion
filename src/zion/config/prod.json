@@ -11,17 +11,20 @@
 				"hosts": [ {
 						"host_name": "agentsmith",
 						"host_ip": "10"
-					}, {
+					},{
+						"host_name": "puppet",
+						"host_ip": "10"
+					},{
 						"host_name": "zion",
 						"host_ip": "11"
-				} ],
+					} ],
 				"subnet": "192.168.0"
 			},
 			"dhcp_conf": {
 				"range_start": "192.168.0.20",
 				"range_end": "192.168.0.49"
 			},
-			"nameservers":["192.168.0.10"],
+			"nameservers":["127.0.0.1"],
 			"full_domain_name":"agentsmith.tinisi.local",
 			"gateway": "192.168.0.1",
 			"ip": "192.168.0.10",

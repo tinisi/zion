@@ -13,7 +13,7 @@ def libvirt_dependencies():
 
 @task
 def install():
-    sudo("yum --assumeyes install http://yum.theforeman.org/releases/1.2/el6/x86_64/foreman-release.rpm")
+    sudo("yum --assumeyes install http://yum.theforeman.org/releases/1.4.2/el6/x86_64/foreman-release.rpm")
     sudo("yum --assumeyes install foreman-installer")
     sudo("yum --assumeyes install foreman-ovirt")
     sudo("echo include foreman_installer | puppet apply --modulepath /usr/share/foreman-installer")
@@ -116,9 +116,6 @@ def __get_dhcp_key():
 def __enable_dhcp_proxy():
     # the positional arguments for this are file, search, replace
     files.sed(proxy_config_file, ':dhcp: false', ':dhcp: true', use_sudo=True, backup='.zion_bak')
-# todo: remove this later
-# just re-read the comment in the config file, I think this only applies to native MS DHCP
-#    files.sed(proxy_config_file, '#:dhcp_subnets: \[192.168.205.0/255.255.255.128, 192.168.205.128/255.255.255.128\]', ':dhcp_subnets: [192.168.0.0/255.255.255.0]', use_sudo=True, backup='.zion_bak')
     # NOTE: using sed instead of the uncomment() method because I was getting a mysterious sed error
     # (I think the lack of spaces after the comment in the original document was messing up Fabric)
     files.sed(proxy_config_file, '#:log_level: DEBUG', ':log_level: DEBUG', use_sudo=True, backup='.zion_bak')    
@@ -126,10 +123,13 @@ def __enable_dhcp_proxy():
 def __enable_dns_proxy():
     files.sed(proxy_config_file, ':dns: false', ':dns: true', use_sudo=True, backup='.zion_bak')
     files.sed(proxy_config_file, ':dns_key: /etc/rndc.key', ':dns_key: ' + __get_dns_key_path(), use_sudo=True, backup='.zion_bak')
+    # __get_dns_key_path() put the .private and .key
+    # chgrp named
+    # chmod g+r
 
 def __get_dns_key_path():
     # this assumes that the one key is in a chrooted etc
-    return sudo('ls /var/named/chroot/etc/Kf*.private')
+    return sudo('ls /var/named/chroot/etc/Kf*.key')
 
 def __add_proxy_user_to_groups():
     sudo('usermod -a -G dhcpd foreman-proxy')
