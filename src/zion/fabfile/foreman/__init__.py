@@ -13,7 +13,7 @@ def libvirt_dependencies():
 
 @task
 def install():
-    sudo("yum --assumeyes install http://yum.theforeman.org/releases/1.8/el6/x86_64/foreman-release.rpm")
+    sudo("yum --assumeyes install http://yum.theforeman.org/releases/1.8/el7/x86_64/foreman-release.rpm")
     sudo("yum --assumeyes install foreman-installer")
     sudo("yum --assumeyes install foreman-ovirt")
     sudo("echo include foreman_installer | puppet apply --modulepath /usr/share/foreman-installer")

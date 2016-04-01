@@ -3,6 +3,14 @@
 # 7/15/2013
 #
 
+# specs
+
+email from Telsin 7/11/2015
+CentOS 7.1
+Foreman 1.8
+oVirt 3.5.3
+
+
 # 3/31/2016
 
 gave root user a p/w
@@ -21,16 +29,16 @@ fab install_foreman --hosts=f-test.local -u tinisi
 [f-test.local] out: The service command supports only basic LSB actions (start, stop, restart, try-restart, reload, force-reload, status). For other actions, please try to use systemctl.
 [f-test.local] out:
 
-
 Fatal error: sudo() received nonzero return code 2 while executing!
 
 Requested: service iptables save
 Executed: sudo -S -p 'sudo password:'  /bin/bash -l -c "service iptables save"
 
-email from Telsin 7/11/2015
-CentOS 7.1
-Foreman 1.8
-oVirt 3.5.3
+done for the day, need to figure out repo updates and major versions of stuff
+
+I was trying to install el6 stuff on my 7.1 machine.
+
+Also, not 100% sure I am 64 bit...
 
 # 3/28/2016
 
