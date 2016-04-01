@@ -95,7 +95,7 @@ fab install_foreman --hosts={your.foreman.hostname} -u {a user in the group whee
 
 ### On your workstation
 
-1. Comment out or delete the nosts file record you made for temporary name resolution for your The Foreman machine
+1. Comment out or delete the hosts file record you made for temporary name resolution for your The Foreman machine
 1. Set the IP address of The Foreman machine as your name server
 1. Verify you can get to the hostname of your The Foreman machine with your web browser, your new server issued its own SSL certificate, so depending on your browser you'll have to accept the un-trusted certificate
 1. You should see a nicely formatted log in screen, verify thast you can log in with user "admin" and password "changeme"

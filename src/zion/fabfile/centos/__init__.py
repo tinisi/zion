@@ -68,8 +68,8 @@ def update():
 
 @task
 def add_repos():
-    sudo('rpm -ivh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm')
-    sudo('rpm -ivh http://yum.puppetlabs.com/el/6/products/i386/puppetlabs-release-6-6.noarch.rpm')
+    sudo('rpm -ivh http://download.fedoraproject.org/pub/epel/7/i386/epel-release-6-8.noarch.rpm')
+    sudo('rpm -ivh http://yum.puppetlabs.com/el/7/products/i386/puppetlabs-release-6-6.noarch.rpm')
 
 @task
 def configure_selinux():
@@ -84,9 +84,11 @@ def configure_selinux():
 def configure_iptables():
     # this is clearly wrong, but breaks chroot'ed named
     # TODO: figure out a rule set that will work for the final full suite
-    sudo('service iptables save')
-    sudo('service iptables stop')
-    sudo('chkconfig iptables off')
+    # sudo('service iptables save')
+    # sudo('service iptables stop')
+    # sudo('chkconfig iptables off')
+    sudo('systemctl disable firewalld')
+    sudo('chkconfig firewalld off')
 
 @task
 def restart_services():

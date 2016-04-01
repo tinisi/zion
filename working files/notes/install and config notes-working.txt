@@ -14,9 +14,9 @@
 
 [X] give wheel sudo
  	- copy sudo file to temp spot
-	 - use fabric command to un-comment line in default file
-	 - use visudo -q -c -s -f on new file to check it
-	 - swap out the temp file
+	- use fabric command to un-comment line in default file
+	- use visudo -q -c -s -f on new file to check it
+	- swap out the temp file
 
 # pre_install
 	centos.add_users
@@ -37,7 +37,7 @@
     centos.update
 
 [X] sudo yum checkupdate
-[X} sudo yum update
+[X] sudo yum update
 [X] yum list installed
 
 # install

@@ -3,7 +3,7 @@
 		"debug": false
 	},
 	"host_conf": {
-		"agentsmith.tinisi.local": {
+		"f-test.local": {
 			"admin_email":"jgrosz@tinisi.com",
 			"bind_conf": {
 				"dns_domain": "tinisi.local",

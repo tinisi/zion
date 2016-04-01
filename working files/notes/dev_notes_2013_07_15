@@ -3,6 +3,44 @@
 # 7/15/2013
 #
 
+# 3/31/2016
+
+gave root user a p/w
+
+put f-test.local in the config file as the agentsmight machine
+fab pre_install --hosts=f-test.local -u root
+
+set aside a template after the pre-install script,
+centos-7.1-template-med-zion-pre-install
+
+cd src/zion  
+fab install_foreman --hosts=f-test.local -u tinisi
+
+[f-test.local] sudo: setenforce Permissive
+[f-test.local] sudo: service iptables save
+[f-test.local] out: The service command supports only basic LSB actions (start, stop, restart, try-restart, reload, force-reload, status). For other actions, please try to use systemctl.
+[f-test.local] out:
+
+
+Fatal error: sudo() received nonzero return code 2 while executing!
+
+Requested: service iptables save
+Executed: sudo -S -p 'sudo password:'  /bin/bash -l -c "service iptables save"
+
+email from Telsin 7/11/2015
+CentOS 7.1
+Foreman 1.8
+oVirt 3.5.3
+
+# 3/28/2016
+
+Virtualbox template centos-7.1-template-med-w-zion-users has
+* remote root access
+* these users
+user: root
+pass: password
+user: tinisi
+pass: password
 
 # 5/10/2014
 
