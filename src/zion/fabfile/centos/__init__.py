@@ -67,6 +67,7 @@ def update():
     # and then another list to compare
     sudo('yum list installed')
 
+# This is mostly untested and I am sad that I ever considered it...
 # @task
 # def install_rvm():
 #     sudo('yum install gcc-c++ patch readline readline-devel zlib zlib-devel')
@@ -88,9 +89,9 @@ def update():
 
 @task
 def add_repos():
-    sudo('yum --assumeyes install yum-utils')
     sudo('rpm -ivh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm')
-    sudo('yum-config-manager --enable rhel-6-server-optional-rpms rhel-server-rhscl-6-rpms')
+    sudo('yum --assumeyes install yum-utils')
+    sudo('yum-config-manager --enable rhel-7-server-optional-rpms rhel-server-rhscl-7-rpms')
     sudo('rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm')
 
 @task

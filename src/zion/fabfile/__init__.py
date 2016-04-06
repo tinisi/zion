@@ -43,8 +43,8 @@ def install_foreman():
     # NOTE: bind needs to be installed before dhcp
     # because of dependency on dnssec-keygen
     dhcp.install()
-    # commenting this out to see if it will fix ruby depdendency problem
-    # puppet.install()
+    # seems like The Foreman should install this...but whatever
+    puppet.install()
     # TODO: I think this is not needed now what we are using oVirt
     # leaving here for now
     foreman.libvirt_dependencies()
