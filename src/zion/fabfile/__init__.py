@@ -41,9 +41,10 @@ def install_foreman():
     # TODO: add a test and abort if no fqdn at this point
     bind.replace_resolv()
     # NOTE: bind needs to be installed before dhcp
-    # because of depdendency on dnssec-keygen
+    # because of dependency on dnssec-keygen
     dhcp.install()
-    puppet.install()
+    # commenting this out to see if it will fix ruby depdendency problem
+    # puppet.install()
     # TODO: I think this is not needed now what we are using oVirt
     # leaving here for now
     foreman.libvirt_dependencies()

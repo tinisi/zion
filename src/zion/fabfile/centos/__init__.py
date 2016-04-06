@@ -63,13 +63,35 @@ def update():
         sudo('yum check-update')
     # just go for it!
     sudo('yum --assumeyes update')
+    sudo('yum groupinstall --assumeyes "Development Tools"')
     # and then another list to compare
     sudo('yum list installed')
 
+# @task
+# def install_rvm():
+#     sudo('yum install gcc-c++ patch readline readline-devel zlib zlib-devel')
+#     sudo('yum install libyaml-devel libffi-devel openssl-devel make')
+#     sudo('yum install bzip2 autoconf automake libtool bison iconv-devel')
+#     # https://gist.github.com/slouma2000/8619039
+#     # from this gist
+#     # hoping this does it for root
+#     sudo('gpg2 --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3')
+#     sudo('curl -L get.rvm.io | bash -s stable')
+#     sudo('source /etc/profile.d/rvm.sh')
+#     sudo('rvm install 1.9.3')
+#     sudo('rvm use 1.9.3 --default')
+#     # and for tinisi
+#     run('curl -L get.rvm.io | bash -s stable')
+#     run('source /etc/profile.d/rvm.sh')
+#     run('rvm install 1.9.3')
+#     run('rvm use 1.9.3 --default')
+
 @task
 def add_repos():
-    sudo('rpm -ivh http://download.fedoraproject.org/pub/epel/7/i386/epel-release-6-8.noarch.rpm')
-    sudo('rpm -ivh http://yum.puppetlabs.com/el/7/products/i386/puppetlabs-release-6-6.noarch.rpm')
+    sudo('yum --assumeyes install yum-utils')
+    sudo('rpm -ivh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm')
+    sudo('yum-config-manager --enable rhel-6-server-optional-rpms rhel-server-rhscl-6-rpms')
+    sudo('rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm')
 
 @task
 def configure_selinux():

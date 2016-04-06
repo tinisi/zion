@@ -5,11 +5,77 @@
 
 # specs
 
+going to try almost current, all in one dropped in 3.6:
+OVirt 3.5
+Foreman 1.11
+
 email from Telsin 7/11/2015
 CentOS 7.1
 Foreman 1.8
 oVirt 3.5.3
 
+# 4/4/2016
+
+trying again, updated to use oVirt 3.5 and Foreman 1.11 to avoid old Ruby issues
+
+fab install_foreman --hosts=f-test.local -u tinisi
+
+sudo yum --assumeyes install http://yum.theforeman.org/releases/1.11/el7/x86_64/foreman-release.rpm
+sudo yum --assumeyes install foreman-installer
+sudo yum --assumeyes install foreman-ovirt
+sudo echo include foreman_installer | puppet apply --modulepath /usr/share/foreman-installer
+
+[f-test.local] sudo: yum --assumeyes install foreman-ovirt
+[f-test.local] out: Loaded plugins: fastestmirror
+[f-test.local] out: Loading mirror speeds from cached hostfile
+[f-test.local] out:  * base: mirror.unl.edu
+[f-test.local] out:  * epel: ftp.osuosl.org
+[f-test.local] out:  * extras: mirror.vcu.edu
+[f-test.local] out:  * updates: centos.netnitco.net
+[f-test.local] out: Resolving Dependencies
+[f-test.local] out: --> Running transaction check
+[f-test.local] out: ---> Package foreman-ovirt.noarch 0:1.11.0-1.el7 will be installed
+...
+[f-test.local] out: --> Finished Dependency Resolution
+[f-test.local] out: Error: Package: tfm-rubygem-netrc-0.7.7-7.el7.noarch (foreman)
+[f-test.local] out:            Requires: rh-ruby22-ruby(release)
+...
+(lots of other ruby related failures)
+...
+[f-test.local] out: Error: Package: tfm-rubygem-net-ssh-3.0.2-1.el7.noarch (foreman)
+[f-test.local] out:            Requires: rh-ruby22-ruby(rubygems)
+[f-test.local] out:  You could try using --skip-broken to work around the problem
+[f-test.local] out:  You could try running: rpm -Va --nofiles --nodigest
+[f-test.local] out:
+
+# 4/3/2016
+
+trying again, removing explicit puppet install to try to fix ruby dependency error
+
+fab install_foreman --hosts=f-test.local -u tinisi
+
+# 4/2/2016
+
+made a new clone from the w/ users template
+
+ran this:
+fab install_foreman --hosts=f-test.local -u tinisi
+
+[f-test.local] sudo: yum --assumeyes install foreman-ovirt
+[f-test.local] out: sudo password:
+[f-test.local] out: Loaded plugins: fastestmirror
+[f-test.local] out: Loading mirror speeds from cached hostfile
+[f-test.local] out:  * base: mirror.netdepot.com
+[f-test.local] out:  * epel: mirror.oss.ou.edu
+[f-test.local] out:  * extras: centos.mirrors.tds.net
+[f-test.local] out:  * updates: centos.netnitco.net
+[f-test.local] out: Resolving Dependencies
+[f-test.local] out: --> Running transaction check
+[f-test.local] out: ---> Package foreman-ovirt.noarch 0:1.8.4-1.el7 will be installed
+...
+[f-test.local] out: Error: Package: ruby193-rubygem-rack-jsonp-1.3.1-1.el7.noarch (foreman)
+[f-test.local] out:            Requires: ruby193-ruby(abi) = 1.9.1
+...
 
 # 3/31/2016
 
